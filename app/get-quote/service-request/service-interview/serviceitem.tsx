@@ -1,138 +1,6 @@
 "use client";
 
-interface ServiceCategory {
-  name: string;
-  subcategories: Subcategory[];
-}
-
-interface Subcategory {
-  name: string;
-  services: string[];
-}
-
-const autoRepairServices: ServiceCategory[] = [
-  {
-    name: "Brakes",
-    subcategories: [
-      {
-        name: "Brake Services",
-        services: [
-          "Brake Inspection",
-          "Brake Pad Replacement",
-          "Brake Rotor Replacement",
-          "Brake Fluid Flush",
-          "Brake Caliper Repair",
-        ],
-      },
-    ],
-  },
-  {
-    name: "Electrical",
-    subcategories: [
-      {
-        name: "Electrical System Services",
-        services: [
-          "Battery Testing and Replacement",
-          "Alternator Repair",
-          "Starter Repair",
-          "Wiring and Electrical System Diagnosis",
-          "Lighting System Repair",
-        ],
-      },
-    ],
-  },
-  {
-    name: "Engine",
-    subcategories: [
-      {
-        name: "Engine Services",
-        services: [
-          "Engine Diagnostics",
-          "Engine Tune-Up",
-          "Engine Overhaul",
-          "Cylinder Head Repair",
-          "Timing Belt Replacement",
-        ],
-      },
-    ],
-  },
-  {
-    name: "Exhaust",
-    subcategories: [
-      {
-        name: "Exhaust System Services",
-        services: [
-          "Exhaust System Inspection",
-          "Muffler Replacement",
-          "Catalytic Converter Replacement",
-          "Exhaust Pipe Repair",
-          "Emission System Repair",
-        ],
-      },
-    ],
-  },
-  {
-    name: "Heating & Air Conditioning",
-    subcategories: [
-      {
-        name: "HVAC Services",
-        services: [
-          "HVAC System Inspection",
-          "AC Recharge and Repair",
-          "Heater Core Replacement",
-          "Blower Motor Repair",
-          "Thermostat Replacement",
-        ],
-      },
-    ],
-  },
-  {
-    name: "Maintenance",
-    subcategories: [
-      {
-        name: "General Maintenance",
-        services: [
-          "Oil Change and Filter Replacement",
-          "Fluid Flush and Replacement",
-          "Tire Rotation and Balancing",
-          "Spark Plug Replacement",
-          "Air Filter Replacement",
-        ],
-      },
-    ],
-  },
-  {
-    name: "Steering & Suspension",
-    subcategories: [
-      {
-        name: "Suspension Services",
-        services: [
-          "Wheel Alignment",
-          "Power Steering System Repair",
-          "Shock Absorber Replacement",
-          "Strut Replacement",
-          "Steering Rack Repair",
-        ],
-      },
-    ],
-  },
-  {
-    name: "Transmission & Drivetrain",
-    subcategories: [
-      {
-        name: "Drivetrain Services",
-        services: [
-          "Transmission Fluid Change",
-          "Clutch Repair and Replacement",
-          "Differential Service",
-          "Driveshaft Repair",
-          "CV Joint Replacement",
-        ],
-      },
-    ],
-  },
-];
-
+import { useState } from "react";
 interface ServiceCategory {
   name: string;
   subcategories: Subcategory[];
@@ -451,35 +319,101 @@ const autoServices: ServiceCategory[] = [
   },
 ];
 
+const SubcategoryItem: React.FC<{
+  subcategory: Subcategory;
+}> = ({ subcategory }) => {
+  const [showServices, setShowServices] = useState(false);
+
+  const handleSubcategoryClick = () => {
+    setShowServices(!showServices);
+  };
+
+  return (
+    <div className="border-b border-gray-200">
+      <div
+        className="p-4 flex items-center justify-between cursor-pointer"
+        onClick={handleSubcategoryClick}
+      >
+        <div className="text-lg font-semibold text-gray-900">{subcategory.name}</div>
+        <svg
+          className={`w-5 h-5 transform transition-transform duration-200 ${
+            showServices ? "rotate-90" : ""
+          }`}
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 48 48"
+        >
+          <path
+            fill="currentColor"
+            d="M26.5 23.95L16.6 14.05L18.75 11.9L30.8 23.95L18.75 36L16.6 33.85L26.5 23.95Z"
+            strokeWidth={1}
+          />
+        </svg>
+      </div>
+      {showServices && (
+        <ul className="ml-6 mb-4">
+          {subcategory.services.map((service, index) => (
+            <li key={index} className="text-gray-600 text-sm py-1">
+              {service}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+};
+
+// Service Category Item component
+const ServiceCategoryItem: React.FC<{
+  category: ServiceCategory;
+}> = ({ category }) => {
+  const [showSubcategories, setShowSubcategories] = useState(false);
+
+  const handleCategoryClick = () => {
+    setShowSubcategories(!showSubcategories);
+  };
+
+  return (
+    <div className="border-b border-gray-300">
+      <div
+        className="px-5 py-3 flex items-center justify-between cursor-pointer bg-gray-100"
+        onClick={handleCategoryClick}
+      >
+        <div className="text-xl font-bold text-gray-800">{category.name}</div>
+        <svg
+          className={`w-6 h-6 transform transition-transform duration-200 ${
+            showSubcategories ? "rotate-90" : ""
+          }`}
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 48 48"
+        >
+          <path
+            fill="currentColor"
+            d="M26.5 23.95L16.6 14.05L18.75 11.9L30.8 23.95L18.75 36L16.6 33.85L26.5 23.95Z"
+            strokeWidth={1}
+          />
+        </svg>
+      </div>
+      {showSubcategories &&
+        category.subcategories.map((subcategory, index) => (
+          <SubcategoryItem key={index} subcategory={subcategory} />
+        ))}
+    </div>
+  );
+};
+
+// Main component for rendering service categories and subcategories
 const ServiceItem = () => {
   return (
-    <>
-      {autoRepairServices.map((m, index) => (
-        <div
-          key={index}
-          className="px-[20px] py-[12px] flex flex-row items-center border-b-[1px] border-b-[#e5e8ed] border-solid cursor-pointer active:bg-[#e5e8ed]"
-        >
-          <div className="flex flex-row items-center pl-4">
-            <div className="text-[14px] text-[#404040]">{m.name}</div>
-          </div>
-          <div className="ml-auto mr-0">
-            <svg
-              className="w-[25px] h-[25px]"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 48 48"
-              id="Keyboard-Arrow-Right--Streamline-Sharp----Material-Symbols"
-            >
-              <path
-                fill="currentColor"
-                d="M26.5 23.95L16.6 14.05L18.75 11.9L30.8 23.95L18.75 36L16.6 33.85L26.5 23.95Z"
-                strokeWidth={1}
-              />
-            </svg>
-          </div>
-        </div>
-      ))}
-    </>
+    <div className="p-6">
+      <h1 className="text-3xl font-extrabold mb-6">Auto Services</h1>
+      <div className="border border-gray-300 rounded-lg">
+        {autoServices.map((category, index) => (
+          <ServiceCategoryItem key={index} category={category} />
+        ))}
+      </div>
+    </div>
   );
 };
 
