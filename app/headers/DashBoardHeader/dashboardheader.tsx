@@ -14,7 +14,7 @@ export default function DashboardHeader() {
   return (
     <div className="flex min-h-[80px] p-[12px] lg:px-6 shadow-[0_.125rem_.25rem_rgba(0,0,0,0.075)] bg-white">
       <div className="flex flex-row items-center w-full">
-        <div className="text-[30px] max-md:text-[26px] max-sm:text-[22px] text-black cursor-pointer">
+        <div className="text-[30px] max-md:text-[26px] max-sm:text-[22px] text-black cursor-pointer" onClick={() => router.replace('/')}>
           DoneEZ
         </div>
         <Button
@@ -81,8 +81,8 @@ export default function DashboardHeader() {
               </div>
             </DropdownTrigger>
             <DropdownMenu className="rounded-sm">
-              <DropdownItem key={"quotes"}>Quotes</DropdownItem>
-              <DropdownItem key={"quotes"}>Profile</DropdownItem>
+              <DropdownItem key={"quotes"} href="/dashboard">Quotes</DropdownItem>
+              <DropdownItem key={"quotes"} href="/dashboard/profile">Profile</DropdownItem>
               <DropdownItem className="sm:hidden" key={"message"}>Message</DropdownItem>
               <DropdownItem key={"quotes"}>Logout</DropdownItem>
             </DropdownMenu>
