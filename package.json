@@ -9,8 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@internationalized/date": "^3.5.5",
+    "@nextui-org/react": "^2.4.8",
+    "@react-aria/i18n": "^3.12.2",
     "@react-google-maps/api": "^2.19.3",
     "@uidotdev/usehooks": "^2.4.1",
+    "framer-motion": "^11.9.0",
     "next": "14.2.13",
     "react": "^18",
     "react-dom": "^18"
