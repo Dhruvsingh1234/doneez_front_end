@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import ServiceHeader from "@/app/headers/ServiceHeader";
 import ServiceFooter from "@/app/footers/service_footer";
+import { setStorage } from "@/app/utils/helper";
 
 export default function ServiceLocation() {
   const router = useRouter();
@@ -62,6 +63,7 @@ export default function ServiceLocation() {
   const handleSuggestionClick = (suggestion: { place_id: string; description: string; main_text: string; secondary_text: string }) => {
       if (inputRef.current) {
           inputRef.current.value = suggestion.main_text + " " + suggestion.secondary_text;
+          setStorage('service-location', suggestion.main_text + " " + suggestion.secondary_text)
           setSuggestions([]); // Clear suggestions when a place is selected
           router.replace('/get-quote/service-request/service-interview')
       }
@@ -121,7 +123,7 @@ export default function ServiceLocation() {
                   <div className="w-1/3 px-[8px] py-[40px] relative max-md:hidden">
                       <div className="w-[1px] absolute top-10 left-[-1.2rem] bottom-10 bg-[#e5e8ed]"></div>
 
-                      <h4 className="text-[#e83c79] text-[20px] mb-2">Where is Openbay available?</h4>
+                      <h4 className="text-[#e83c79] text-[20px] mb-2">Where is DoneEZ available?</h4>
                       <p className="pb-4 text-[14px] text-[#616a76]">
                           Openbay is available nationwide. We need your ZIP code in order to locate nearby shops and generate accurate price estimates.
                       </p>

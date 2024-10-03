@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef } from "react";
 
-const VehicleSelector: React.FC = () => {
+
+const VehicleSelector = ({ onSelectionChange }:any) => {
   const currentYear = new Date().getFullYear();
   const years = Array.from(new Array(currentYear - 1959), (val, index) =>
     (1960 + index).toString()
@@ -94,6 +95,7 @@ const VehicleSelector: React.FC = () => {
             setModelOptions(models);
           } else {
             setModelInput("No Model");
+            setSelectedModel("No Model");
             setModelOptions([])
           }
         })
@@ -105,6 +107,10 @@ const VehicleSelector: React.FC = () => {
       setModelOptions([]);
     }
   }, [selectedYear, selectedMake]);
+
+  useEffect(() => {
+    onSelectionChange(selectedYear, selectedMake, selectedModel);
+  }, [selectedYear, selectedMake, selectedModel]);
 
   return (
     <div className="w-full">

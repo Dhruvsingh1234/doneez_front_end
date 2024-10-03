@@ -3,9 +3,17 @@
 import { useState } from "react";
 import DashboardHeader from "../../headers/DashBoardHeader/dashboardheader";
 import { Tabs, Tab, Card, CardBody, Input, Button, } from "@nextui-org/react";
+import { getStorage } from "@/app/utils/helper";
+import { redirect } from "next/navigation";
 
 export default function Profile() {
   const [selected, setSelected] = useState<string>("All Quotes");
+
+  const accessToken = getStorage('access_token')
+  if (!accessToken) {
+    console.log(accessToken)
+    redirect('/');
+  }
 
   return (
     <div className="min-h-[100vh] bg-[#f4f6fa] min-w-full flex flex-col">

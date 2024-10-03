@@ -1,16 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState , useEffect} from "react";
 
 import ServiceFooter from "@/app/footers/service_footer";
 import ServiceHeader from "@/app/headers/ServiceHeader";
 import ServiceItem from "./serviceitem";
 import ServiceItem1 from "./serviceitem1";
+import { getStorage } from "@/app/utils/helper";
 
 export default function ServiceInterView() {
   const [tab, setTab] = useState(1);
   const [hover1, sethover1] = useState(false);
   const [hover2, sethover2] = useState(false);
+  const [serviceLocation, setServiceLocation] = useState<string | null>(null);
 
   const handleSetTap = (index: number) => {
     if (index == 1) {
@@ -21,6 +23,11 @@ export default function ServiceInterView() {
     sethover1(false);
     sethover2(false);
   };
+
+  useEffect(() => {
+    const servicelocation = getStorage('service-location')
+    setServiceLocation(servicelocation)
+  }, []);
 
   return (
     <div className="min-h-[100vh] bg-[#f4f6fa] min-w-full flex flex-col">
@@ -124,7 +131,9 @@ export default function ServiceInterView() {
                 </div>
 
                 <div className="py-[20px] px-[16px]">
-                  <div className="text-[16px]">Florida, NY 10921</div>
+                  <div className="text-[16px]">{
+                      serviceLocation
+                  }</div>
                 </div>
               </div>
 

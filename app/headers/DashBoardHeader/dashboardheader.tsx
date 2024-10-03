@@ -7,10 +7,17 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "@nextui-org/react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
+import { setStorage } from "@/app/utils/helper";
 
 export default function DashboardHeader() {
   const router = useRouter();
+
+  const handleLogout = () => {
+    setStorage('access_token', null)
+    router.replace('/')
+  }
+
   return (
     <div className="flex min-h-[80px] p-[12px] lg:px-6 shadow-[0_.125rem_.25rem_rgba(0,0,0,0.075)] bg-white">
       <div className="flex flex-row items-center w-full">
@@ -82,9 +89,9 @@ export default function DashboardHeader() {
             </DropdownTrigger>
             <DropdownMenu className="rounded-sm">
               <DropdownItem key={"quotes"} href="/dashboard">Quotes</DropdownItem>
-              <DropdownItem key={"quotes"} href="/dashboard/profile">Profile</DropdownItem>
+              <DropdownItem key={"profiles"} href="/dashboard/profile">Profile</DropdownItem>
               <DropdownItem className="sm:hidden" key={"message"}>Message</DropdownItem>
-              <DropdownItem key={"quotes"}>Logout</DropdownItem>
+              <DropdownItem key={"logout"} onClick={handleLogout}>Logout</DropdownItem>
             </DropdownMenu>
           </Dropdown>
         </div>

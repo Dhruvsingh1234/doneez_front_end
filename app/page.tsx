@@ -1,9 +1,20 @@
+"use client"
+
 
 import CustomHeader from "./headers/CustomHeader";
 import Link from "next/link";
+import { getStorage } from "./utils/helper";
+import { redirect } from "next/navigation";
+
 export default function Home() {
+  const accessToken = getStorage('access_token')
+  if (accessToken) {
+    redirect('/dashboard');
+  }
+
   return (
     <div>
+      {accessToken}
       <CustomHeader/>
       <div className="flex justify-center w-full text-center max-sm:text-left max-sm:p-[20px]">
         <div className="max-w-[930px] mt-[48px] max-sm:mt-6 max-sm:flex max-sm:flex-col max-sm:justify-center max-sm:items-center w-full">

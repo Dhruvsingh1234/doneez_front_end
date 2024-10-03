@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { setStorage } from "@/app/utils/helper";
 
 interface ServiceCategory {
   name: string;
@@ -440,7 +441,10 @@ const ServiceItem1 = () => {
                 <div
                   key={index}
                   className="p-4 border-b border-gray-300 text-gray-700 hover:bg-gray-100 cursor-pointer"
-                  onClick={() => router.replace("/get-quote/service-request/service-note")}
+                  onClick={() => {
+                    setStorage('service-services', selectedCategory?.name + '-' + selectedSubcategory.name + '-' + service)
+                    router.replace("/get-quote/service-request/service-note")
+                  }}
                 >
                   {service}
                 </div>
