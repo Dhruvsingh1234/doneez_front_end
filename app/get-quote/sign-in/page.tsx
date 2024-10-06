@@ -1,5 +1,6 @@
 'use client'
 
+import { AxiosError } from 'axios';
 import ServiceHeader from '@/app/headers/ServiceHeader'
 import ServiceFooter from '@/app/footers/service_footer'
 import { useState } from 'react'
@@ -55,13 +56,16 @@ export default function ServiceSignIn() {
 
             console.log('Login successful:', access)
             router.replace('/get-quote/estimates')
-        } catch (error: any) {
-            // Handle errors (e.g., invalid credentials)
-            if (error.response && error.response.status === 401) {
-                console.log('Invalid credentials')
-                SetLoginValidation(true)
+        } catch (error: unknown) {
+            if (error instanceof AxiosError) { // Narrow the type to AxiosError
+                if (error.response && error.response.status === 401) {
+                    console.log('Invalid credentials');
+                    SetLoginValidation(true);
+                } else {
+                    console.error('Login error:', error.message);
+                }
             } else {
-                console.error('Login error:', error)
+                console.error('Unexpected error:', error);
             }
         }
     }
@@ -175,7 +179,7 @@ export default function ServiceSignIn() {
                         Sign in
                     </Button>
                     <div className='text-[14px] text-red-600 underline text-center cursor-pointer' onClick={() => router.replace('/get-quote/sign-up')}>
-                        If you don't have account
+                        If you don&apos;t have account
                     </div>
                 </div>
             </div>

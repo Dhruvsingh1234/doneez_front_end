@@ -118,7 +118,7 @@ export default function Estimates() {
 
                                     <div className="flex flex-col gap-3 justify-center px-4">
                                         <div className="text-black text-[18px] font-bold max-md:text-center">
-                                            Don't see the shop you are looking
+                                            Don`t see the shop you are looking
                                             for?{' '}
                                         </div>
                                         <div className="text-[#616a76] text-[16px] max-md:text-center">

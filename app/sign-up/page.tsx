@@ -305,7 +305,7 @@ export default function SignUp() {
             )
 
             // Extract data from response
-            const { user, refresh, access } = response.data
+            const { user } = response.data
             // Store tokens and user data as needed
             alert('Sign Up successful')
             console.log('Sign Up successful:', user)

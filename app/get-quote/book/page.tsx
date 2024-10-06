@@ -6,18 +6,17 @@ import ServiceFooter from "@/app/footers/service_footer";
 import ServiceHeader from "@/app/headers/ServiceHeader";
 
 import {DatePicker, Button, TimeInput} from "@nextui-org/react";
-import {today, isWeekend, getLocalTimeZone, Time} from "@internationalized/date";
+import {today, isWeekend, getLocalTimeZone, Time, DateValue} from "@internationalized/date";
 import {useLocale} from "@react-aria/i18n";
 
 export default function Book() {
 
     const router = useRouter();
-    let now = today(getLocalTimeZone());
-    let disabledRanges:any[] = [];
+    const disabledRanges: [] = [];
     
-    let {locale} = useLocale();
+    const {locale} = useLocale();
 
-    let isDateUnavailable = (date:any) =>
+    const isDateUnavailable = (date:DateValue) =>
       isWeekend(date, locale) ||
       disabledRanges.some(
         (interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0,
