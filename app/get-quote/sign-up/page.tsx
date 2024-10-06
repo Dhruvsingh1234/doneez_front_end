@@ -2,7 +2,7 @@
 
 import ServiceHeader from '@/app/headers/ServiceHeader'
 import ServiceFooter from '@/app/footers/service_footer'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { getStorage, setStorage } from '@/app/utils/helper'
 import { Button, Input, Tabs, Tab, Textarea } from '@nextui-org/react'
 import PhoneInput, { Value } from 'react-phone-number-input'

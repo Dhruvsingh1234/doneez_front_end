@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import DashboardHeader from "../headers/DashBoardHeader/dashboardheader";
 import { Tabs, Tab, Card, CardBody } from "@nextui-org/react";
 import { getStorage } from "../utils/helper";

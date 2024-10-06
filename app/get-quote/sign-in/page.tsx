@@ -2,9 +2,9 @@
 
 import ServiceHeader from '@/app/headers/ServiceHeader'
 import ServiceFooter from '@/app/footers/service_footer'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { getStorage, setStorage } from '@/app/utils/helper'
-import { Button, Input, Snippet } from '@nextui-org/react'
+import { Button, Input } from '@nextui-org/react'
 import { postRequest } from '@/app/utils/axios'
 import { redirect, useRouter } from 'next/navigation'
 

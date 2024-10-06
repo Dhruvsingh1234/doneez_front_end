@@ -10,6 +10,7 @@ import { useEffect } from "react";
 export default function Home() {
   useEffect(() => {
     const accessToken = getStorage('access_token')
+    console.log(accessToken)
     if (accessToken != null) {
       redirect('/dashboard');
     }  

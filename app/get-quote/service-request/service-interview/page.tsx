@@ -4,25 +4,11 @@ import { useState , useEffect} from "react";
 
 import ServiceFooter from "@/app/footers/service_footer";
 import ServiceHeader from "@/app/headers/ServiceHeader";
-import ServiceItem from "./serviceitem";
 import ServiceItem1 from "./serviceitem1";
 import { getStorage } from "@/app/utils/helper";
 
 export default function ServiceInterView() {
-  const [tab, setTab] = useState(1);
-  const [hover1, sethover1] = useState(false);
-  const [hover2, sethover2] = useState(false);
   const [serviceLocation, setServiceLocation] = useState<string | null>(null);
-
-  const handleSetTap = (index: number) => {
-    if (index == 1) {
-      setTab(1);
-    } else {
-      setTab(2);
-    }
-    sethover1(false);
-    sethover2(false);
-  };
 
   useEffect(() => {
     const servicelocation = getStorage('service-location')
