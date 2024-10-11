@@ -17,6 +17,7 @@ if (!baseURL) {
 function createAxiosClient(contentType: string): AxiosInstance {
     const client = axios.create({
         baseURL,
+        timeout: 5000,
         headers: {
             'Content-Type': contentType,
             Accept: contentType,
