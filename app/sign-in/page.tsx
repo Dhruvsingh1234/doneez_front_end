@@ -1,5 +1,6 @@
 'use client'
 
+import { AxiosError } from 'axios';
 import Link from 'next/link'
 import ServiceFooter from '../footers/service_footer'
 import { Button, Input, Snippet } from '@nextui-org/react'
@@ -7,6 +8,7 @@ import { useState } from 'react'
 import { postRequest } from '../utils/axios'
 import { getStorage, setStorage } from '../utils/helper'
 import { redirect, useRouter } from 'next/navigation'
+import toast, { Toaster } from 'react-hot-toast'
 
 interface LoginResponse {
     user: {
@@ -23,6 +25,16 @@ interface LoginResponse {
     access: string
 }
 
+const CustomToast = ({ message, type }: { message: string; type: 'success' | 'error' }) => (
+    <div className={`${type === 'success' ? 'bg-green-500' : 'bg-red-500'} text-white px-6 py-4 shadow-md rounded-lg flex items-center`}>
+        <span className="text-lg mr-3">
+            {type === 'success' ? '✅' : '❌'}
+        </span>
+        <span className="font-semibold">{message}</span>
+    </div>
+)
+
+
 export default function SignIn() {
     const accessToken = getStorage('access_token')
     if (accessToken) {
@@ -35,8 +47,43 @@ export default function SignIn() {
     }
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    const [loginValidation, SetLoginValidation] = useState(false)
+    const [emailError, setEmailError] = useState('')
+    const [passwordError, setPasswordError] = useState('')
+
+    const validateEmail = (email: string) => {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!email) {
+            setEmailError('Email is required')
+            return false
+        } else if (!re.test(email)) {
+            setEmailError('Invalid email format')
+            return false
+        }
+        setEmailError('')
+        return true
+    }
+
+    const validatePassword = (password: string) => {
+        if (!password) {
+            setPasswordError('Password is required')
+            return false
+        } else if (password.length < 6) {
+            setPasswordError('Password must be at least 6 characters long')
+            return false
+        }
+        setPasswordError('')
+        return true
+    }
+    
+
     async function loginUser(email: string, password: string): Promise<void> {
+        const isEmailValid = validateEmail(email)
+        const isPasswordValid = validatePassword(password)
+
+        if (!isEmailValid || !isPasswordValid) {
+            return
+        }
+
         try {
             const payload = { email, password }
             const response = await postRequest<LoginResponse>(
@@ -53,20 +100,49 @@ export default function SignIn() {
             setStorage('user', JSON.stringify(user))
 
             console.log('Login successful:', access)
-            router.replace('/dashboard')
-        } catch (error: any) {
-            // Handle errors (e.g., invalid credentials)
-            if (error.response && error.response.status === 401) {
-                console.log('Invalid credentials')
-                SetLoginValidation(true)
+            toast.custom((t) => (
+                <CustomToast
+                    message="Sign in successful! Welcome back to DoneEZ."
+                    type="success"
+                />
+            ))
+            setTimeout(() => {
+                router.replace('/get-quote/estimates')
+            }, 2000) // Delay navigation to allow the user to see the success message
+        } catch (error: unknown) {
+            if (error instanceof AxiosError) {
+                if (error.response && error.response.status === 401) {
+                    console.log('Invalid credentials');
+                    toast.custom((t) => (
+                        <CustomToast
+                            message="Invalid credentials. Please check your email and password."
+                            type="error"
+                        />
+                    ))
+                } else {
+                    console.error('Login error:', error.message);
+                    toast.custom((t) => (
+                        <CustomToast
+                            message="An error occurred during sign in. Please try again later."
+                            type="error"
+                        />
+                    ))
+                }
             } else {
-                console.error('Login error:', error)
+                console.error('Unexpected error:', error);
+                toast.custom((t) => (
+                    <CustomToast
+                        message="An unexpected error occurred. Please try again later."
+                        type="error"
+                    />
+                ))
             }
         }
     }
 
     return (
         <div className="min-h-[100vh] bg-[#f4f6fa] min-w-full flex flex-col">
+            <Toaster position="top-center" reverseOrder={false} />
             <div className="flex min-h-[80px] p-[12px] lg:px-6 shadow-[0_.125rem_.25rem_rgba(0,0,0,0.075)]">
                 <div className="flex flex-row items-center w-full">
                     <div className="text-[30px] text-black">
@@ -88,12 +164,12 @@ export default function SignIn() {
             <div className="flex-1 max-w-[400px] w-full mx-auto px-4 py-8 h-auto">
                 <div className="flex flex-col gap-6 mt-6 max-sm:mt-4 h-auto rounded-md shadow-[0_4px_4px_4px_rgba(222,224,230,.5)] bg-white px-6 py-12">
                     <div className="text-[32px]">Sign In</div>
-                    {loginValidation && (
+                    {/* {loginValidation && (
                         <div className="w-full p-4 bg-[#fcdada] text-[#963e3e] rounded">
                             Your username and password are invalid. Please try
                             logging in again.
                         </div>
-                    )}
+                    )} */}
                     <Input
                         type="email"
                         label="Email Address"
@@ -101,7 +177,12 @@ export default function SignIn() {
                         variant="bordered"
                         placeholder="Enter your email"
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => {
+                            setEmail(e.target.value)
+                            validateEmail(e.target.value)
+                        }}
+                        errorMessage={emailError}
+                        isInvalid={!!emailError}
                     />
                     <div className="w-full relative">
                         <Input
@@ -113,10 +194,15 @@ export default function SignIn() {
                                 input: 'pr-[25%]',
                             }}
                             value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            onChange={(e) => {
+                                setPassword(e.target.value)
+                                validatePassword(e.target.value)
+                            }}
+                            errorMessage={passwordError}
+                            isInvalid={!!passwordError}
                         />
                         <div
-                            className="absolute w-[25%] flex justify-center items-center bg-white h-full border-[#e5e7eb] border-solid border-[1px] rounded-tr-md rounded-br-md z-10 top-0 right-0 cursor-pointer"
+                            className="absolute w-[25%] max-h-[56px] flex justify-center items-center bg-white h-full border-[#e5e7eb] border-solid border-[1px] rounded-tr-md rounded-br-md z-10 top-0 right-0 cursor-pointer"
                             onClick={handleShowChange}
                         >
                             {showPassword ? (
