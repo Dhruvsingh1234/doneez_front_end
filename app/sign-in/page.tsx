@@ -106,9 +106,6 @@ export default function SignIn() {
                     type="success"
                 />
             ))
-            setTimeout(() => {
-                router.replace('/get-quote/estimates')
-            }, 2000) // Delay navigation to allow the user to see the success message
         } catch (error: unknown) {
             if (error instanceof AxiosError) {
                 if (error.response && error.response.status === 401) {
