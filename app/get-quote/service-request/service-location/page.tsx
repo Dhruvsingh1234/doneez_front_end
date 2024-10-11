@@ -125,7 +125,7 @@ export default function ServiceLocation() {
 
                       <h4 className="text-[#e83c79] text-[20px] mb-2">Where is DoneEZ available?</h4>
                       <p className="pb-4 text-[14px] text-[#616a76]">
-                          Openbay is available nationwide. We need your ZIP code in order to locate nearby shops and generate accurate price estimates.
+                          DoneEZ is available nationwide. We need your ZIP code in order to locate nearby shops and generate accurate price estimates.
                       </p>
                   </div>
               </div>

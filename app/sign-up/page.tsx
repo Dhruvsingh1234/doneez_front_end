@@ -7,6 +7,8 @@ import 'react-phone-number-input/style.css'
 import PhoneInput, { Value } from 'react-phone-number-input'
 import { useState } from 'react'
 import { postRequest } from '../utils/axios'
+import toast, { Toaster } from 'react-hot-toast'
+
 
 interface RegisterResponse {
     user: {
@@ -263,6 +265,7 @@ export default function SignUp() {
             if (selected == 'Customer') {
                 isValid = validateCustomerFields()
                 if (!isValid) {
+                    toast.error('Please fill in all required fields correctly.')
                     return
                 }
                 payload = {
@@ -279,6 +282,7 @@ export default function SignUp() {
             } else if (selected == 'Professional') {
                 isValid = validateProfessionalFields()
                 if (!isValid) {
+                    toast.error('Please fill in all required fields correctly.')
                     return
                 }
                 payload = {
@@ -307,7 +311,7 @@ export default function SignUp() {
             // Extract data from response
             const { user } = response.data
             // Store tokens and user data as needed
-            alert('Sign Up successful')
+            toast.success('Sign Up successful! Welcome to DoneEZ.')
             console.log('Sign Up successful:', user)
         } catch (error: any) {
             // Handle errors returned by the backend
@@ -382,15 +386,17 @@ export default function SignUp() {
                         }
                     }
                 }
+                toast.error('Sign Up failed. Please check the form for errors.')
             } else {
                 console.error('Registration error:', error)
-                alert('An error occurred during registration.')
+                toast.error('An error occurred during registration. Please try again later.')
             }
         }
     }
 
     return (
         <div className="min-h-[100vh] bg-[#f4f6fa] min-w-full flex flex-col">
+            <Toaster position="top-center" reverseOrder={false} />
             {/* Header */}
             <div className="flex min-h-[80px] p-[12px] lg:px-6 shadow-[0_.125rem_.25rem_rgba(0,0,0,0.075)]">
                 <div className="flex flex-row items-center w-full">

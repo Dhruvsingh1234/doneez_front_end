@@ -8,6 +8,7 @@ import { Button, Input, Tabs, Tab, Textarea } from '@nextui-org/react'
 import PhoneInput, { Value } from 'react-phone-number-input'
 import { postRequest } from '@/app/utils/axios'
 import { redirect, useRouter } from 'next/navigation'
+import toast, { Toaster } from 'react-hot-toast'
 
 interface RegisterResponse {
     user: {
@@ -269,6 +270,7 @@ export default function ServiceSignUp() {
             if (selected == 'Customer') {
                 isValid = validateCustomerFields()
                 if (!isValid) {
+                    toast.error('Please fill in all required fields correctly.')
                     return
                 }
                 payload = {
@@ -285,6 +287,7 @@ export default function ServiceSignUp() {
             } else if (selected == 'Professional') {
                 isValid = validateProfessionalFields()
                 if (!isValid) {
+                    toast.error('Please fill in all required fields correctly.')
                     return
                 }
                 payload = {
@@ -313,14 +316,15 @@ export default function ServiceSignUp() {
             // Extract data from response
             const { user, refresh, access } = response.data
             // Store tokens and user data as needed
-            alert('Sign Up successful')
-
             setStorage('access_token', access)
             setStorage('refresh_token', refresh)
             setStorage('user', JSON.stringify(user))
 
             console.log('Sign Up successful:', user)
-            router.replace('/get-quote/estimates')
+            toast.success('Sign Up successful! Welcome to DoneEZ.')
+            setTimeout(() => {
+                router.replace('/get-quote/estimates')
+            }, 2000) // Delay navigation to allow the user to see the success message
         } catch (error: any) {
             // Handle errors returned by the backend
             if (error.response && error.response.status === 400) {
@@ -394,14 +398,16 @@ export default function ServiceSignUp() {
                         }
                     }
                 }
+                toast.error('Sign Up failed. Please check the form for errors.')
             } else {
                 console.error('Registration error:', error)
-                alert('An error occurred during registration.')
+                toast.error('An error occurred during registration. Please try again later.')
             }
         }
     }
     return (
         <div className="min-h-[100vh] bg-[#f4f6fa] min-w-full flex flex-col">
+            <Toaster position="top-center" reverseOrder={false} />
             <ServiceHeader progressNumber={2} progressTitle="Sign in" />
 
             <div className="flex-1 max-w-[450px] w-full mx-auto px-4 max-[500px]:px-0 max-[500px]:pt-3 py-8 h-auto">
