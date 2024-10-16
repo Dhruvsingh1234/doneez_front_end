@@ -1,39 +1,39 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 
-import ServiceFooter from '@/app/footers/service_footer'
-import ServiceHeader from '@/app/headers/ServiceHeader'
-import ServiceHomeSvg from './garage_lift_car.svg'
-import Image from 'next/image'
-import { getStorage } from '@/app/utils/helper'
-import { redirect, useRouter } from 'next/navigation'
+import ServiceFooter from '@/app/footers/service_footer';
+import ServiceHeader from '@/app/headers/ServiceHeader';
+import ServiceHomeSvg from './garage_lift_car.svg';
+import Image from 'next/image';
+import { getStorage } from '@/app/utils/helper';
+import { redirect, useRouter } from 'next/navigation';
 
 export default function Estimates() {
-    const router = useRouter()
-    const [serviceLocation, setServiceLocation] = useState<string | null>(null)
-    const [service, setService] = useState<string | null>(null)
-    const [serviceVehicle, setServiceVehicle] = useState<string | null>(null)
+    const router = useRouter();
+    const [serviceLocation, setServiceLocation] = useState<string | null>(null);
+    const [service, setService] = useState<string | null>(null);
+    const [serviceVehicle, setServiceVehicle] = useState<string | null>(null);
 
     useEffect(() => {
         // This runs only on the client side after the component mounts
-        const storedService = getStorage('service-services')
-        setService(storedService)
-        const servicelocation = getStorage('service-location')
-        setServiceLocation(servicelocation)
+        const storedService = getStorage('service-services');
+        setService(storedService);
+        const servicelocation = getStorage('service-location');
+        setServiceLocation(servicelocation);
         const vehicleInfo =
             getStorage('selectedYear') +
             ' ' +
             getStorage('selectedMake') +
-            getStorage('selectedModel')
-        setServiceVehicle(vehicleInfo)
-    }, [])
+            getStorage('selectedModel');
+        setServiceVehicle(vehicleInfo);
+    }, []);
 
-    const accessToken = getStorage('access_token')
+    const accessToken = getStorage('access_token');
     if (accessToken == null) {
-      redirect('/get-quote/sign-in');
+        redirect('/get-quote/sign-in');
     }
-  
+
     return (
         <div className="min-h-[100vh] bg-[#f4f6fa] min-w-full flex flex-col">
             <ServiceHeader progressNumber={3} progressTitle="Estimates" />
@@ -59,7 +59,7 @@ export default function Estimates() {
                             />
                         </svg>
                     </button>
-                    <h1 className="text-[25px] max-[488px]:text-[20px] font-bold">
+                    <h1 className="text-[25px] max-[488px]:text-[20px] font-bold text-black">
                         Compare estimates and select a shop.
                     </h1>
                 </div>
@@ -237,5 +237,5 @@ export default function Estimates() {
 
             <ServiceFooter />
         </div>
-    )
+    );
 }

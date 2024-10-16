@@ -1,51 +1,61 @@
-'use client'
+'use client';
 
-import ServiceHeader from '@/app/headers/ServiceHeader'
-import ServiceFooter from '@/app/footers/service_footer'
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { getStorage, setStorage } from '@/app/utils/helper'
+import ServiceHeader from '@/app/headers/ServiceHeader';
+import ServiceFooter from '@/app/footers/service_footer';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { getStorage, setStorage } from '@/app/utils/helper';
 
 export default function ServiceNote() {
-    const router = useRouter()
+    const router = useRouter();
 
-    const [radioStatus, setRadioStatus] = useState('')
-    const [otherDetail, setOtherDetail] = useState('')
-    const [addtionalInfo, setAddtionalInfo] = useState('')
+    const [radioStatus, setRadioStatus] = useState('');
+    const [otherDetail, setOtherDetail] = useState('');
+    const [addtionalInfo, setAddtionalInfo] = useState('');
 
-    const [serviceLocation, setServiceLocation] = useState<string | null>(null)
-    const [service, setService] = useState<string | null>(null)
+    const [serviceLocation, setServiceLocation] = useState<string | null>(null);
+    const [service, setService] = useState<string | null>(null);
+
+    const [serviceStatus, setServiceStatus] = useState(false);
 
     const handleChange = (val: string) => {
-        setRadioStatus(val)
-    }
+        setRadioStatus(val);
+    };
 
     const handleContinue = () => {
-        const radioVal = radioStatus == 'Other' ? otherDetail : radioStatus
-        setStorage('service-addtionalinfo', addtionalInfo)
-        setStorage('service-radioval', radioVal)
-    }
+        const radioVal = radioStatus == 'Other' ? otherDetail : radioStatus;
+        setStorage('service-addtionalinfo', addtionalInfo);
+        setStorage('service-radioval', radioVal);
+    };
 
     useEffect(() => {
-        const servicelocation = getStorage('service-location')
-        setServiceLocation(servicelocation)
-    }, [])
+        const servicelocation = getStorage('service-location');
+        setServiceLocation(servicelocation);
+    }, []);
 
     useEffect(() => {
         // This runs only on the client side after the component mounts
-        const storedService = getStorage('service-services')
-        setService(storedService)
-    }, [])
+        const storedService = getStorage('service-services');
+        setService(storedService);
+    }, []);
 
+    const handleServiceStatus = (val: boolean) => {
+        setServiceStatus(val);
+    };
     return (
         <div className="min-h-[100vh] bg-[#f4f6fa] min-w-full flex flex-col">
-            <ServiceHeader progressNumber={1} progressTitle="SERVICES" />
+            <ServiceHeader progressNumber={1} progressTitle="SERVICES" ServiceStatus={handleServiceStatus}/>
 
             <div className="flex-1 max-w-[1024px] w-full mx-auto px-4 py-8 max-sm:bg-white max-sm:max-w-[540px] max-sm:shadow-none max-sm:min-h-full max-sm:h-auto">
                 <div className="flex flex-row items-center pb-4">
                     <button
                         className="max-md:fixed max-md:left-[12px] max-md:top-[52px] max-md:translate-y-[-50%] flex items-center justify-center shadow-[0_2px_3px_0_#dce0e6] w-[40px] h-[40px] rounded-[50%] bg-white mr-4 text-[#788391]
                         active:border-solid active:border-red-300 active:border-[2px]"
+                        onClick={() =>
+                            router.replace(
+                                '/get-quote/service-request/service-interview'
+                            )
+                        }
                     >
                         {/* SVG Icon */}
                         <svg
@@ -62,7 +72,7 @@ export default function ServiceNote() {
                             />
                         </svg>
                     </button>
-                    <h1 className="text-[32px] font-bold">
+                    <h1 className="text-[32px] font-bold text-black">
                         Add a note for the mechanic.
                     </h1>
                 </div>
@@ -301,5 +311,5 @@ export default function ServiceNote() {
 
             <ServiceFooter />
         </div>
-    )
+    );
 }

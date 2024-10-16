@@ -1,7 +1,7 @@
-'use client'
+'use client';
 
-import Link from 'next/link'
-import ServiceFooter from '../footers/service_footer'
+import Link from 'next/link';
+import ServiceFooter from '../footers/service_footer';
 
 import {
     Button,
@@ -11,81 +11,81 @@ import {
     CardBody,
     Card,
     Textarea,
-} from '@nextui-org/react'
-import 'react-phone-number-input/style.css'
-import PhoneInput, { Value } from 'react-phone-number-input'
-import { useState } from 'react'
-import { postRequest } from '../utils/axios'
+} from '@nextui-org/react';
+import 'react-phone-number-input/style.css';
+import PhoneInput, { Value } from 'react-phone-number-input';
+import { useState } from 'react';
+import { postRequest } from '../utils/axios';
 
 interface RegisterResponse {
     user: {
-        id: number
-        email: string
-        first_name: string
-        last_name: string
-        is_customer: boolean
-        is_mechanic: boolean
-        is_active: boolean
+        id: number;
+        email: string;
+        first_name: string;
+        last_name: string;
+        is_customer: boolean;
+        is_mechanic: boolean;
+        is_active: boolean;
         // Include other user fields as needed
-    }
-    refresh: string
-    access: string
+    };
+    refresh: string;
+    access: string;
 }
 
 export default function SignUp() {
-    const [selected, setSelected] = useState<string>('Customer')
-    const [showPassword, setShowPassword] = useState(false)
-    const [showPassword2, setShowPassword2] = useState(false)
-    const [phoneVal, setPhoneVal] = useState<Value>()
-    const [phoneVal2, setPhoneVal2] = useState<Value>()
+    const [selected, setSelected] = useState<string>('Customer');
+    const [showPassword, setShowPassword] = useState(false);
+    const [showPassword2, setShowPassword2] = useState(false);
+    const [phoneVal, setPhoneVal] = useState<Value>();
+    const [phoneVal2, setPhoneVal2] = useState<Value>();
 
-    const [firstName, setFirstName] = useState('')
-    const [lastName, setLastName] = useState('')
-    const [emailAddress, setEmailAddress] = useState('')
-    const [password, setPassword] = useState('')
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [emailAddress, setEmailAddress] = useState('');
+    const [password, setPassword] = useState('');
 
-    const [firstName2, setFirstName2] = useState('')
-    const [lastName2, setLastName2] = useState('')
-    const [emailAddress2, setEmailAddress2] = useState('')
-    const [password2, setPassword2] = useState('')
-    const [jobtitle, setJobTitle] = useState('')
-    const [businussName, setBusinessName] = useState('')
-    const [zipCode, setZipCode] = useState('')
-    const [website, setWebsite] = useState('')
-    const [businessInfo, setBusinessInfo] = useState('')
-    const [heardInfo, setHeardInfo] = useState('')
+    const [firstName2, setFirstName2] = useState('');
+    const [lastName2, setLastName2] = useState('');
+    const [emailAddress2, setEmailAddress2] = useState('');
+    const [password2, setPassword2] = useState('');
+    const [jobtitle, setJobTitle] = useState('');
+    const [businussName, setBusinessName] = useState('');
+    const [zipCode, setZipCode] = useState('');
+    const [website, setWebsite] = useState('');
+    const [businessInfo, setBusinessInfo] = useState('');
+    const [heardInfo, setHeardInfo] = useState('');
 
-    const [is_firstName, setIs_FirstName] = useState(false)
-    const [is_lastName, setIs_LastName] = useState(false)
-    const [is_email, setIs_Email] = useState(false)
-    const [is_password, setIs_Password] = useState(false)
+    const [is_firstName, setIs_FirstName] = useState(false);
+    const [is_lastName, setIs_LastName] = useState(false);
+    const [is_email, setIs_Email] = useState(false);
+    const [is_password, setIs_Password] = useState(false);
 
-    const [is_firstName2, setIs_FirstName2] = useState(false)
-    const [is_lastName2, setIs_LastName2] = useState(false)
-    const [is_email2, setIs_Email2] = useState(false)
-    const [is_password2, setIs_Password2] = useState(false)
-    const [is_phone2, setIs_Phone2] = useState(false)
-    const [is_heard, setIs_Heard] = useState(false)
+    const [is_firstName2, setIs_FirstName2] = useState(false);
+    const [is_lastName2, setIs_LastName2] = useState(false);
+    const [is_email2, setIs_Email2] = useState(false);
+    const [is_password2, setIs_Password2] = useState(false);
+    const [is_phone2, setIs_Phone2] = useState(false);
+    const [is_heard, setIs_Heard] = useState(false);
 
     const handleShowChange = () => {
-        setShowPassword(!showPassword)
-    }
+        setShowPassword(!showPassword);
+    };
 
     const handlePhoneChange = (value: Value) => {
-        setPhoneVal(value)
-    }
+        setPhoneVal(value);
+    };
 
     const handleShowChange2 = () => {
-        setShowPassword2(!showPassword2)
-    }
+        setShowPassword2(!showPassword2);
+    };
 
     const handlePhoneChange2 = (value: Value) => {
-        setPhoneVal2(value)
-    }
+        setPhoneVal2(value);
+    };
     async function RegisterUser(): Promise<void> {
         try {
-            let payload = {}    
-            if(selected == 'Customer'){
+            let payload = {};
+            if (selected == 'Customer') {
                 payload = {
                     email: emailAddress,
                     password: password,
@@ -94,10 +94,10 @@ export default function SignUp() {
                     is_customer: true,
                     is_mechanic: false,
                     customer_profile: {
-                        phone_number: phoneVal
-                    }
-                }
-            }else if(selected == 'Professional') {
+                        phone_number: phoneVal,
+                    },
+                };
+            } else if (selected == 'Professional') {
                 payload = {
                     email: emailAddress2,
                     password: password2,
@@ -112,27 +112,27 @@ export default function SignUp() {
                         heard_info: heardInfo,
                         zip_code: zipCode,
                         job_title: jobtitle,
-                        web_site: website
-                    }
-                }
+                        web_site: website,
+                    },
+                };
             }
             const response = await postRequest<RegisterResponse>(
                 'users/register/',
                 payload
-            )
+            );
 
             // Extract data from response
-            const { user, refresh, access } = response.data
+            const { user, refresh, access } = response.data;
             // Store tokens and user data as needed
-            alert("Sign Up successful")
-            console.log('Login successful:', user)
+            alert('Sign Up successful');
+            console.log('Login successful:', user);
         } catch (error: any) {
             // Handle errors (e.g., invalid credentials)
             if (error.response && error.response.status === 400) {
-                alert(error.response)
+                alert(error.response);
             } else {
-                console.error('Login error:', error)
-                alert(error)
+                console.error('Login error:', error);
+                alert(error);
             }
         }
     }
@@ -185,7 +185,9 @@ export default function SignUp() {
                                     radius="sm"
                                     placeholder="Enter your first name"
                                     value={firstName}
-                                    onChange={(e) => setFirstName(e.target.value)}
+                                    onChange={(e) =>
+                                        setFirstName(e.target.value)
+                                    }
                                 />
                                 <Input
                                     type="text"
@@ -196,7 +198,9 @@ export default function SignUp() {
                                     variant="bordered"
                                     placeholder="Enter your last name"
                                     value={lastName}
-                                    onChange={(e) => setLastName(e.target.value)}
+                                    onChange={(e) =>
+                                        setLastName(e.target.value)
+                                    }
                                 />
                                 <Input
                                     type="email"
@@ -207,7 +211,9 @@ export default function SignUp() {
                                     variant="bordered"
                                     placeholder="Enter your email"
                                     value={emailAddress}
-                                    onChange={(e) => setEmailAddress(e.target.value)}
+                                    onChange={(e) =>
+                                        setEmailAddress(e.target.value)
+                                    }
                                 />
                                 <div className="w-full relative">
                                     <Input
@@ -222,7 +228,9 @@ export default function SignUp() {
                                             input: 'pr-[25%]',
                                         }}
                                         value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
+                                        onChange={(e) =>
+                                            setPassword(e.target.value)
+                                        }
                                     />
                                     <div
                                         className="absolute w-[25%] flex justify-center items-center bg-white h-full border-[#e5e7eb] border-solid border-[1px] rounded-tr-md rounded-br-md z-10 top-0 right-0 cursor-pointer"
@@ -325,7 +333,9 @@ export default function SignUp() {
                                     isRequired
                                     placeholder="First Name"
                                     value={firstName2}
-                                    onChange={(e) => setFirstName2(e.target.value)}
+                                    onChange={(e) =>
+                                        setFirstName2(e.target.value)
+                                    }
                                 />
                                 <Input
                                     isRequired
@@ -337,7 +347,9 @@ export default function SignUp() {
                                     variant="bordered"
                                     placeholder="Last Name"
                                     value={lastName2}
-                                    onChange={(e) => setLastName2(e.target.value)}
+                                    onChange={(e) =>
+                                        setLastName2(e.target.value)
+                                    }
                                 />
                                 <Input
                                     isRequired
@@ -349,7 +361,9 @@ export default function SignUp() {
                                     variant="bordered"
                                     placeholder="Email Address"
                                     value={emailAddress2}
-                                    onChange={(e) => setEmailAddress2(e.target.value)}
+                                    onChange={(e) =>
+                                        setEmailAddress2(e.target.value)
+                                    }
                                 />
                                 <div className="w-full relative">
                                     <Input
@@ -365,7 +379,9 @@ export default function SignUp() {
                                             input: 'pr-[25%]',
                                         }}
                                         value={password2}
-                                        onChange={(e) => setPassword2(e.target.value)}
+                                        onChange={(e) =>
+                                            setPassword2(e.target.value)
+                                        }
                                     />
                                     <div
                                         className="absolute w-[25%] flex justify-center items-center bg-white h-full border-[#e5e7eb] border-solid border-[1px] rounded-tr-md rounded-br-md z-10 top-0 right-0 cursor-pointer"
@@ -451,7 +467,9 @@ export default function SignUp() {
                                         variant="bordered"
                                         placeholder="Company or business name"
                                         value={businussName}
-                                        onChange={(e) => setBusinessName(e.target.value)}
+                                        onChange={(e) =>
+                                            setBusinessName(e.target.value)
+                                        }
                                     />
                                 </div>
                                 <div>
@@ -464,7 +482,9 @@ export default function SignUp() {
                                         variant="bordered"
                                         placeholder="Job Title"
                                         value={jobtitle}
-                                        onChange={(e) => setJobTitle(e.target.value)}
+                                        onChange={(e) =>
+                                            setJobTitle(e.target.value)
+                                        }
                                     />
                                 </div>
                                 <div>
@@ -477,7 +497,9 @@ export default function SignUp() {
                                         variant="bordered"
                                         placeholder="10921"
                                         value={zipCode}
-                                        onChange={(e) => setZipCode(e.target.value)}
+                                        onChange={(e) =>
+                                            setZipCode(e.target.value)
+                                        }
                                     />
                                 </div>
                                 <div>
@@ -490,7 +512,9 @@ export default function SignUp() {
                                         variant="bordered"
                                         placeholder=""
                                         value={website}
-                                        onChange={(e) => setWebsite(e.target.value)}
+                                        onChange={(e) =>
+                                            setWebsite(e.target.value)
+                                        }
                                         startContent={
                                             <div className="pointer-events-none flex items-center">
                                                 <span className="text-default-400 text-small">
@@ -512,7 +536,9 @@ export default function SignUp() {
                                             input: 'resize-y min-h-[40px]',
                                         }}
                                         value={businessInfo}
-                                        onChange={(e) => setBusinessInfo(e.target.value)}
+                                        onChange={(e) =>
+                                            setBusinessInfo(e.target.value)
+                                        }
                                     />
                                 </div>
                                 <div>
@@ -523,7 +549,9 @@ export default function SignUp() {
                                         radius="none"
                                         defaultValue=""
                                         value={heardInfo}
-                                        onChange={(e) => setHeardInfo(e.target.value)}
+                                        onChange={(e) =>
+                                            setHeardInfo(e.target.value)
+                                        }
                                         classNames={{
                                             base: 'w-full',
                                             input: 'resize-y min-h-[40px]',
@@ -547,5 +575,5 @@ export default function SignUp() {
             </div>
             <ServiceFooter />
         </div>
-    )
+    );
 }

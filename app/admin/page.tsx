@@ -1,19 +1,19 @@
-'use client'
+'use client';
 
-import { Tabs, Tab, Card, CardBody, Input, Button } from '@nextui-org/react'
-import { useEffect, useState } from 'react'
-import { getStorage } from '../utils/helper'
-import { redirect } from 'next/navigation'
+import { Tabs, Tab, Card, CardBody, Input, Button } from '@nextui-org/react';
+import { useEffect, useState } from 'react';
+import { getStorage } from '../utils/helper';
+import { redirect } from 'next/navigation';
 
 export default function Admin() {
-    const [selected, setSelected] = useState<string>('Customers')
+    const [selected, setSelected] = useState<string>('Customers');
     useEffect(() => {
-        const accessToken = getStorage('admin-access_token')
-        console.log(accessToken)
+        const accessToken = getStorage('admin-access_token');
+        console.log(accessToken);
         if (accessToken == null) {
-          redirect('/admin/sign-in');
-        }  
-      }, [])
+            redirect('/admin/sign-in');
+        }
+    }, []);
     return (
         <div className="min-w-full min-h-screen bg-[#f4f6fa] flex flex-col">
             <div className="mt-16 flex flex-col items-center w-full">
@@ -111,5 +111,5 @@ export default function Admin() {
                 </div>
             </div>
         </div>
-    )
+    );
 }

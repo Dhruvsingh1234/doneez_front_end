@@ -1,113 +1,117 @@
-'use client'
+'use client';
 
 import { AxiosError } from 'axios';
-import Link from 'next/link'
-import { Button, Input, Snippet } from '@nextui-org/react'
-import { useState } from 'react'
-import { postRequest } from '../../utils/axios'
-import { getStorage, setStorage } from '../../utils/helper'
-import { redirect, useRouter } from 'next/navigation'
-import toast, { Toaster } from 'react-hot-toast'
+import Link from 'next/link';
+import { Button, Input, Snippet } from '@nextui-org/react';
+import { useState } from 'react';
+import { postRequest } from '../../utils/axios';
+import { getStorage, setStorage } from '../../utils/helper';
+import { redirect, useRouter } from 'next/navigation';
+import toast, { Toaster } from 'react-hot-toast';
 
 interface LoginResponse {
     user: {
-        id: number
-        email: string
-        first_name: string
-        last_name: string
-        is_customer: boolean
-        is_mechanic: boolean
-        is_active: boolean
+        id: number;
+        email: string;
+        first_name: string;
+        last_name: string;
+        is_customer: boolean;
+        is_mechanic: boolean;
+        is_active: boolean;
         // Include other user fields as needed
-    }
-    refresh: string
-    access: string
+    };
+    refresh: string;
+    access: string;
 }
 
-const CustomToast = ({ message, type }: { message: string; type: 'success' | 'error' }) => (
-    <div className={`${type === 'success' ? 'bg-green-500' : 'bg-red-500'} text-white px-6 py-4 shadow-md rounded-lg flex items-center`}>
-        <span className="text-lg mr-3">
-            {type === 'success' ? '✅' : '❌'}
-        </span>
+const CustomToast = ({
+    message,
+    type,
+}: {
+    message: string;
+    type: 'success' | 'error';
+}) => (
+    <div
+        className={`${type === 'success' ? 'bg-green-500' : 'bg-red-500'} text-white px-6 py-4 shadow-md rounded-lg flex items-center`}
+    >
+        <span className="text-lg mr-3">{type === 'success' ? '✅' : '❌'}</span>
         <span className="font-semibold">{message}</span>
     </div>
-)
+);
 
-export default function AdminSignIn(){
-
-    const accessToken = getStorage('admin-access_token')
+export default function AdminSignIn() {
+    const accessToken = getStorage('admin-access_token');
     if (accessToken) {
-        redirect('/admin')
+        redirect('/admin');
     }
-    const router = useRouter()
-    const [showPassword, setShowPassword] = useState(false)
+    const router = useRouter();
+    const [showPassword, setShowPassword] = useState(false);
     const handleShowChange = () => {
-        setShowPassword(!showPassword)
-    }
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [emailError, setEmailError] = useState('')
-    const [passwordError, setPasswordError] = useState('')
+        setShowPassword(!showPassword);
+    };
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [emailError, setEmailError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
 
     const validateEmail = (email: string) => {
-        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!email) {
-            setEmailError('Email is required')
-            return false
+            setEmailError('Email is required');
+            return false;
         } else if (!re.test(email)) {
-            setEmailError('Invalid email format')
-            return false
+            setEmailError('Invalid email format');
+            return false;
         }
-        setEmailError('')
-        return true
-    }
+        setEmailError('');
+        return true;
+    };
 
     const validatePassword = (password: string) => {
         if (!password) {
-            setPasswordError('Password is required')
-            return false
+            setPasswordError('Password is required');
+            return false;
         } else if (password.length < 6) {
-            setPasswordError('Password must be at least 6 characters long')
-            return false
+            setPasswordError('Password must be at least 6 characters long');
+            return false;
         }
-        setPasswordError('')
-        return true
-    }
-    
+        setPasswordError('');
+        return true;
+    };
 
     async function loginUser(email: string, password: string): Promise<void> {
-        const isEmailValid = validateEmail(email)
-        const isPasswordValid = validatePassword(password)
+        const isEmailValid = validateEmail(email);
+        const isPasswordValid = validatePassword(password);
 
         if (!isEmailValid || !isPasswordValid) {
-            return
+            return;
         }
 
         try {
-            const payload = { email, password }
+            const payload = { email, password };
             const response = await postRequest<LoginResponse>(
                 'users/staff/login/',
                 payload
-            )
+            );
 
             // Extract data from response
-            const { user, refresh, access } = response.data
+            const { user, refresh, access } = response.data;
 
             // Store tokens and user data as needed
-            setStorage('admin-access_token', access)
-            setStorage('refresh_token', refresh)
-            setStorage('admin-user', JSON.stringify(user))
+            setStorage('admin-access_token', access);
+            setStorage('refresh_token', refresh);
+            setStorage('admin-user', JSON.stringify(user));
 
-            console.log('Login successful:', access)
+            console.log('Login successful:', access);
             toast.custom((t) => (
                 <CustomToast
                     message="Sign in successful! Welcome back to DoneEZ."
                     type="success"
                 />
-            ))
+            ));
             setTimeout(() => {
-                router.replace('/admin')
-            }, 2000) // Delay navigation to allow the user to see the success message
+                router.replace('/admin');
+            }, 2000); // Delay navigation to allow the user to see the success message
         } catch (error: unknown) {
             if (error instanceof AxiosError) {
                 if (error.response && error.response.status === 401) {
@@ -117,7 +121,7 @@ export default function AdminSignIn(){
                             message="Invalid credentials. Please check your email and password."
                             type="error"
                         />
-                    ))
+                    ));
                 } else {
                     console.error('Login error:', error.message);
                     toast.custom((t) => (
@@ -125,7 +129,7 @@ export default function AdminSignIn(){
                             message="An error occurred during sign in. Please try again later."
                             type="error"
                         />
-                    ))
+                    ));
                 }
             } else {
                 console.error('Unexpected error:', error);
@@ -134,12 +138,12 @@ export default function AdminSignIn(){
                         message="An unexpected error occurred. Please try again later."
                         type="error"
                     />
-                ))
+                ));
             }
         }
     }
 
-    return(
+    return (
         <div className="min-w-full min-h-screen bg-[#f4f6fa] flex justify-center items-center">
             <Toaster position="top-center" reverseOrder={false} />
             <div className="flex-1 max-w-[400px] w-full mx-auto px-4 py-8 h-auto">
@@ -159,8 +163,8 @@ export default function AdminSignIn(){
                         placeholder="Enter your email"
                         value={email}
                         onChange={(e) => {
-                            setEmail(e.target.value)
-                            validateEmail(e.target.value)
+                            setEmail(e.target.value);
+                            validateEmail(e.target.value);
                         }}
                         errorMessage={emailError}
                         isInvalid={!!emailError}
@@ -176,8 +180,8 @@ export default function AdminSignIn(){
                             }}
                             value={password}
                             onChange={(e) => {
-                                setPassword(e.target.value)
-                                validatePassword(e.target.value)
+                                setPassword(e.target.value);
+                                validatePassword(e.target.value);
                             }}
                             errorMessage={passwordError}
                             isInvalid={!!passwordError}
@@ -257,5 +261,5 @@ export default function AdminSignIn(){
                 </div>
             </div>
         </div>
-    )
+    );
 }

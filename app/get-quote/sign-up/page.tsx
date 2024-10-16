@@ -1,28 +1,28 @@
-'use client'
+'use client';
 
-import ServiceHeader from '@/app/headers/ServiceHeader'
-import ServiceFooter from '@/app/footers/service_footer'
-import { useState } from 'react'
-import { getStorage, setStorage } from '@/app/utils/helper'
-import { Button, Input, Tabs, Tab, Textarea } from '@nextui-org/react'
-import PhoneInput, { Value } from 'react-phone-number-input'
-import { postRequest } from '@/app/utils/axios'
-import { redirect, useRouter } from 'next/navigation'
-import toast, { Toaster } from 'react-hot-toast'
+import ServiceHeader from '@/app/headers/ServiceHeader';
+import ServiceFooter from '@/app/footers/service_footer';
+import { useState } from 'react';
+import { getStorage, setStorage } from '@/app/utils/helper';
+import { Button, Input, Tabs, Tab, Textarea } from '@nextui-org/react';
+import PhoneInput, { Value } from 'react-phone-number-input';
+import { postRequest } from '@/app/utils/axios';
+import { redirect, useRouter } from 'next/navigation';
+import toast, { Toaster } from 'react-hot-toast';
 
 interface RegisterResponse {
     user: {
-        id: number
-        email: string
-        first_name: string
-        last_name: string
-        is_customer: boolean
-        is_mechanic: boolean
-        is_active: boolean
+        id: number;
+        email: string;
+        first_name: string;
+        last_name: string;
+        is_customer: boolean;
+        is_mechanic: boolean;
+        is_active: boolean;
         // Include other user fields as needed
-    }
-    refresh: string
-    access: string
+    };
+    refresh: string;
+    access: string;
 }
 
 const PasswordInput = ({
@@ -32,17 +32,17 @@ const PasswordInput = ({
     errorMessage,
     isInvalid,
 }: {
-    label: string
-    value: string
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-    errorMessage?: string
-    isInvalid?: boolean
+    label: string;
+    value: string;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    errorMessage?: string;
+    isInvalid?: boolean;
 }) => {
-    const [showPassword, setShowPassword] = useState(false)
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleShowChange = () => {
-        setShowPassword(!showPassword)
-    }
+        setShowPassword(!showPassword);
+    };
 
     return (
         <div className="w-full relative">
@@ -124,154 +124,156 @@ const PasswordInput = ({
                 )}
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default function ServiceSignUp() {
-    const accessToken = getStorage('access_token')
+    const accessToken = getStorage('access_token');
     if (accessToken) {
-        redirect('/get-quote/estimates')
+        redirect('/get-quote/estimates');
     }
-    const router = useRouter()
-    const [selected, setSelected] = useState<string>('Customer')
-    const [phoneVal, setPhoneVal] = useState<Value>()
-    const [phoneVal2, setPhoneVal2] = useState<Value>()
+    const router = useRouter();
+    const [selected, setSelected] = useState<string>('Customer');
+    const [phoneVal, setPhoneVal] = useState<Value>();
+    const [phoneVal2, setPhoneVal2] = useState<Value>();
 
     // Customer form states
-    const [firstName, setFirstName] = useState('')
-    const [lastName, setLastName] = useState('')
-    const [emailAddress, setEmailAddress] = useState('')
-    const [password, setPassword] = useState('')
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [emailAddress, setEmailAddress] = useState('');
+    const [password, setPassword] = useState('');
 
     // Professional form states
-    const [firstName2, setFirstName2] = useState('')
-    const [lastName2, setLastName2] = useState('')
-    const [emailAddress2, setEmailAddress2] = useState('')
-    const [password2, setPassword2] = useState('')
-    const [jobtitle, setJobTitle] = useState('')
-    const [businussName, setBusinessName] = useState('')
-    const [zipCode, setZipCode] = useState('')
-    const [website, setWebsite] = useState('')
-    const [businessInfo, setBusinessInfo] = useState('')
-    const [heardInfo, setHeardInfo] = useState('')
+    const [firstName2, setFirstName2] = useState('');
+    const [lastName2, setLastName2] = useState('');
+    const [emailAddress2, setEmailAddress2] = useState('');
+    const [password2, setPassword2] = useState('');
+    const [jobtitle, setJobTitle] = useState('');
+    const [businussName, setBusinessName] = useState('');
+    const [zipCode, setZipCode] = useState('');
+    const [website, setWebsite] = useState('');
+    const [businessInfo, setBusinessInfo] = useState('');
+    const [heardInfo, setHeardInfo] = useState('');
 
     // Error states for Customer
-    const [firstNameError, setFirstNameError] = useState('')
-    const [lastNameError, setLastNameError] = useState('')
-    const [emailError, setEmailError] = useState('')
-    const [passwordError, setPasswordError] = useState('')
+    const [firstNameError, setFirstNameError] = useState('');
+    const [lastNameError, setLastNameError] = useState('');
+    const [emailError, setEmailError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
 
     // Error states for Professional
-    const [firstName2Error, setFirstName2Error] = useState('')
-    const [lastName2Error, setLastName2Error] = useState('')
-    const [email2Error, setEmail2Error] = useState('')
-    const [password2Error, setPassword2Error] = useState('')
-    const [phone2Error, setPhone2Error] = useState('')
-    const [heardError, setHeardError] = useState('')
+    const [firstName2Error, setFirstName2Error] = useState('');
+    const [lastName2Error, setLastName2Error] = useState('');
+    const [email2Error, setEmail2Error] = useState('');
+    const [password2Error, setPassword2Error] = useState('');
+    const [phone2Error, setPhone2Error] = useState('');
+    const [heardError, setHeardError] = useState('');
 
     const handlePhoneChange = (value: Value) => {
-        setPhoneVal(value)
-    }
+        setPhoneVal(value);
+    };
 
     const handlePhoneChange2 = (value: Value) => {
-        setPhoneVal2(value)
-    }
+        setPhoneVal2(value);
+    };
 
     function isValidEmail(email: string) {
-        return /\S+@\S+\.\S+/.test(email)
+        return /\S+@\S+\.\S+/.test(email);
     }
 
     function validateCustomerFields() {
-        let isValid = true
+        let isValid = true;
         if (!firstName.trim()) {
-            setFirstNameError('First name is required.')
-            isValid = false
+            setFirstNameError('First name is required.');
+            isValid = false;
         } else {
-            setFirstNameError('')
+            setFirstNameError('');
         }
         if (!lastName.trim()) {
-            setLastNameError('Last name is required.')
-            isValid = false
+            setLastNameError('Last name is required.');
+            isValid = false;
         } else {
-            setLastNameError('')
+            setLastNameError('');
         }
         if (!emailAddress.trim()) {
-            setEmailError('Email is required.')
-            isValid = false
+            setEmailError('Email is required.');
+            isValid = false;
         } else if (!isValidEmail(emailAddress)) {
-            setEmailError('Email is invalid.')
-            isValid = false
+            setEmailError('Email is invalid.');
+            isValid = false;
         } else {
-            setEmailError('')
+            setEmailError('');
         }
         if (!password) {
-            setPasswordError('Password is required.')
-            isValid = false
+            setPasswordError('Password is required.');
+            isValid = false;
         } else if (password.length < 8) {
-            setPasswordError('Password must be at least 8 characters.')
-            isValid = false
+            setPasswordError('Password must be at least 8 characters.');
+            isValid = false;
         } else {
-            setPasswordError('')
+            setPasswordError('');
         }
-        return isValid
+        return isValid;
     }
 
     function validateProfessionalFields() {
-        let isValid = true
+        let isValid = true;
         if (!firstName2.trim()) {
-            setFirstName2Error('First name is required.')
-            isValid = false
+            setFirstName2Error('First name is required.');
+            isValid = false;
         } else {
-            setFirstName2Error('')
+            setFirstName2Error('');
         }
         if (!lastName2.trim()) {
-            setLastName2Error('Last name is required.')
-            isValid = false
+            setLastName2Error('Last name is required.');
+            isValid = false;
         } else {
-            setLastName2Error('')
+            setLastName2Error('');
         }
         if (!emailAddress2.trim()) {
-            setEmail2Error('Email is required.')
-            isValid = false
+            setEmail2Error('Email is required.');
+            isValid = false;
         } else if (!isValidEmail(emailAddress2)) {
-            setEmail2Error('Email is invalid.')
-            isValid = false
+            setEmail2Error('Email is invalid.');
+            isValid = false;
         } else {
-            setEmail2Error('')
+            setEmail2Error('');
         }
         if (!password2) {
-            setPassword2Error('Password is required.')
-            isValid = false
+            setPassword2Error('Password is required.');
+            isValid = false;
         } else if (password2.length < 8) {
-            setPassword2Error('Password must be at least 8 characters.')
-            isValid = false
+            setPassword2Error('Password must be at least 8 characters.');
+            isValid = false;
         } else {
-            setPassword2Error('')
+            setPassword2Error('');
         }
         if (!phoneVal2) {
-            setPhone2Error('Phone number is required.')
-            isValid = false
+            setPhone2Error('Phone number is required.');
+            isValid = false;
         } else {
-            setPhone2Error('')
+            setPhone2Error('');
         }
         if (!heardInfo.trim()) {
-            setHeardError('This field is required.')
-            isValid = false
+            setHeardError('This field is required.');
+            isValid = false;
         } else {
-            setHeardError('')
+            setHeardError('');
         }
-        return isValid
+        return isValid;
     }
 
     async function RegisterUser(): Promise<void> {
         try {
-            let isValid = false
-            let payload = {}
+            let isValid = false;
+            let payload = {};
             if (selected == 'Customer') {
-                isValid = validateCustomerFields()
+                isValid = validateCustomerFields();
                 if (!isValid) {
-                    toast.error('Please fill in all required fields correctly.')
-                    return
+                    toast.error(
+                        'Please fill in all required fields correctly.'
+                    );
+                    return;
                 }
                 payload = {
                     email: emailAddress,
@@ -283,12 +285,14 @@ export default function ServiceSignUp() {
                     customer_profile: {
                         phone_number: phoneVal,
                     },
-                }
+                };
             } else if (selected == 'Professional') {
-                isValid = validateProfessionalFields()
+                isValid = validateProfessionalFields();
                 if (!isValid) {
-                    toast.error('Please fill in all required fields correctly.')
-                    return
+                    toast.error(
+                        'Please fill in all required fields correctly.'
+                    );
+                    return;
                 }
                 payload = {
                     email: emailAddress2,
@@ -306,102 +310,106 @@ export default function ServiceSignUp() {
                         job_title: jobtitle,
                         web_site: website,
                     },
-                }
+                };
             }
             const response = await postRequest<RegisterResponse>(
                 'users/register/',
                 payload
-            )
+            );
 
             // Extract data from response
-            const { user, refresh, access } = response.data
+            const { user, refresh, access } = response.data;
             // Store tokens and user data as needed
-            setStorage('access_token', access)
-            setStorage('refresh_token', refresh)
-            setStorage('user', JSON.stringify(user))
+            setStorage('access_token', access);
+            setStorage('refresh_token', refresh);
+            setStorage('user', JSON.stringify(user));
 
-            console.log('Sign Up successful:', user)
-            toast.success('Sign Up successful! Welcome to DoneEZ.')
+            console.log('Sign Up successful:', user);
+            toast.success('Sign Up successful! Welcome to DoneEZ.');
             setTimeout(() => {
-                router.replace('/get-quote/estimates')
-            }, 2000) // Delay navigation to allow the user to see the success message
+                router.replace('/get-quote/estimates');
+            }, 2000); // Delay navigation to allow the user to see the success message
         } catch (error: any) {
             // Handle errors returned by the backend
             if (error.response && error.response.status === 400) {
-                const errors = error.response.data
+                const errors = error.response.data;
 
                 // Reset all error messages
-                setFirstNameError('')
-                setLastNameError('')
-                setEmailError('')
-                setPasswordError('')
-                setFirstName2Error('')
-                setLastName2Error('')
-                setEmail2Error('')
-                setPassword2Error('')
-                setPhone2Error('')
-                setHeardError('')
+                setFirstNameError('');
+                setLastNameError('');
+                setEmailError('');
+                setPasswordError('');
+                setFirstName2Error('');
+                setLastName2Error('');
+                setEmail2Error('');
+                setPassword2Error('');
+                setPhone2Error('');
+                setHeardError('');
 
                 // Map backend errors to frontend fields
                 for (const key in errors) {
-                    const messages = errors[key]
+                    const messages = errors[key];
                     const message = Array.isArray(messages)
                         ? messages[0]
-                        : messages
+                        : messages;
 
                     if (selected === 'Customer') {
                         switch (key) {
                             case 'first_name':
-                                setFirstNameError(message)
-                                break
+                                setFirstNameError(message);
+                                break;
                             case 'last_name':
-                                setLastNameError(message)
-                                break
+                                setLastNameError(message);
+                                break;
                             case 'email':
-                                setEmailError(message)
-                                break
+                                setEmailError(message);
+                                break;
                             case 'password':
-                                setPasswordError(message)
-                                break
+                                setPasswordError(message);
+                                break;
                             default:
-                                break
+                                break;
                         }
                     } else if (selected === 'Professional') {
                         switch (key) {
                             case 'first_name':
-                                setFirstName2Error(message)
-                                break
+                                setFirstName2Error(message);
+                                break;
                             case 'last_name':
-                                setLastName2Error(message)
-                                break
+                                setLastName2Error(message);
+                                break;
                             case 'email':
-                                setEmail2Error(message)
-                                break
+                                setEmail2Error(message);
+                                break;
                             case 'password':
-                                setPassword2Error(message)
-                                break
+                                setPassword2Error(message);
+                                break;
                             case 'mechanic_profile':
                                 // Handle nested errors in mechanic_profile
                                 if (typeof messages === 'object') {
                                     for (const subKey in messages) {
-                                        const subMessage = messages[subKey][0]
+                                        const subMessage = messages[subKey][0];
                                         if (subKey === 'phone_number') {
-                                            setPhone2Error(subMessage)
+                                            setPhone2Error(subMessage);
                                         } else if (subKey === 'heard_info') {
-                                            setHeardError(subMessage)
+                                            setHeardError(subMessage);
                                         }
                                     }
                                 }
-                                break
+                                break;
                             default:
-                                break
+                                break;
                         }
                     }
                 }
-                toast.error('Sign Up failed. Please check the form for errors.')
+                toast.error(
+                    'Sign Up failed. Please check the form for errors.'
+                );
             } else {
-                console.error('Registration error:', error)
-                toast.error('An error occurred during registration. Please try again later.')
+                console.error('Registration error:', error);
+                toast.error(
+                    'An error occurred during registration. Please try again later.'
+                );
             }
         }
     }
@@ -712,5 +720,5 @@ export default function ServiceSignUp() {
 
             <ServiceFooter />
         </div>
-    )
+    );
 }

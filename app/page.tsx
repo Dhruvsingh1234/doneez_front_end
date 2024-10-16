@@ -1,34 +1,38 @@
-"use client"
+'use client';
 
-
-import CustomHeader from "./headers/CustomHeader";
-import Link from "next/link";
-import { getStorage } from "./utils/helper";
-import { redirect } from "next/navigation";
-import { useEffect } from "react";
+import CustomHeader from './headers/CustomHeader';
+import Link from 'next/link';
+import { getStorage } from './utils/helper';
+import { redirect, useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { Button } from '@nextui-org/react';
+import Landing from './component/landing';
+import ServiceFooter from './footers/service_footer';
 
 export default function Home() {
-  useEffect(() => {
-    const accessToken = getStorage('access_token')
-    console.log(accessToken)
-    if (accessToken != null) {
-      redirect('/dashboard');
-    }  
-  }, [])
+    const router = useRouter();
+    useEffect(() => {
+        const accessToken = getStorage('access_token');
+        console.log(accessToken);
+        if (accessToken != null) {
+            redirect('/dashboard');
+        }
+    }, []);
 
-  return (
-    <div>
-      <CustomHeader/>
-      <div className="flex justify-center w-full text-center max-sm:text-left max-sm:p-[20px]">
-        <div className="max-w-[930px] mt-[48px] max-sm:mt-6 max-sm:flex max-sm:flex-col max-sm:justify-center max-sm:items-center w-full">
-          <div className="mt-[24px] mb-[20px] w-full">
+    return (
+        <div className='bg-white'>
+            <CustomHeader />
+            <div className="flex justify-center w-full text-center max-sm:text-left max-sm:p-[20px]">
+                <div className="max-w-[950px] mt-[48px] max-sm:mt-6 max-sm:flex max-sm:flex-col max-sm:justify-center max-sm:items-center w-full">
+                    {/* <div className="mt-[24px] mb-[20px] w-full">
             <h1 className="text-center px-2 max-sm:p-0 max-sm:text-left font-bold max-md:text-6xl max-sm:text-4xl text-[65px] leading-[80px] tracking-[-0.02em]">Vehicle service, made easy
               <div className="text-[#0098d3]">Fair Price Guarantee.</div>
             </h1>
           </div>
           <h2 className="font-bold text-[20px] max-sm:text-lg max-sm:items-start mb-8 px-2 max-sm:p-0">Finally, a simple way to compare services, pricing, and automotive professionals nearby.</h2>
 
-          <div className="relative max-sm:mt-[10px] w-full px-2 max-sm:p-0">
+          <Button size="lg" color="primary" className="text-[22px]" onClick={() => router.replace('/get-quote/service-request/service-location')}>Get a quote</Button> */}
+                    {/* <div className="relative max-sm:mt-[10px] w-full px-2 max-sm:p-0">
             <div className="w-full flex max-w-[640px] mx-auto max-sm:flex-col flex-wrap sm:shadow-[0_5px_5px_0_rgba(97,106,118,0.1)] items-stretch sm:rounded-[6px]">
               <div className="w-full flex max-sm:flex-col max-sm:gap-[15px] max-sm:flex-wrap rounded-[6px]">
 
@@ -61,9 +65,11 @@ export default function Home() {
 
               </div>
             </div>
-          </div>
+          </div> */}
+                    <Landing />
+                </div>
+            </div>
+            <ServiceFooter />
         </div>
-      </div>
-    </div>
-  );
+    );
 }

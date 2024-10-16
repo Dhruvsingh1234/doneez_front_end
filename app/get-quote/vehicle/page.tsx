@@ -1,57 +1,57 @@
-'use client'
+'use client';
 
-import { useRouter } from 'next/navigation'
-import ServiceHeader from '@/app/headers/ServiceHeader'
-import ServiceFooter from '@/app/footers/service_footer'
-import VehicleSelector from './vehicleselector'
-import { useState, useEffect } from 'react'
-import { getStorage, setStorage } from '@/app/utils/helper'
+import { useRouter } from 'next/navigation';
+import ServiceHeader from '@/app/headers/ServiceHeader';
+import ServiceFooter from '@/app/footers/service_footer';
+import VehicleSelector from './vehicleselector';
+import { useState, useEffect } from 'react';
+import { getStorage, setStorage } from '@/app/utils/helper';
 
 export default function VehicleSelect() {
-    const [selectedYear, setSelectedYear] = useState('')
-    const [selectedMake, setSelectedMake] = useState('')
-    const [selectedModel, setSelectedModel] = useState('')
+    const [selectedYear, setSelectedYear] = useState('');
+    const [selectedMake, setSelectedMake] = useState('');
+    const [selectedModel, setSelectedModel] = useState('');
 
-    const [serviceLocation, setServiceLocation] = useState<string | null>(null)
-    const [service, setService] = useState<string | null>(null)
+    const [serviceLocation, setServiceLocation] = useState<string | null>(null);
+    const [service, setService] = useState<string | null>(null);
 
     useEffect(() => {
         // This runs only on the client side after the component mounts
-        const storedService = getStorage('service-services')
-        setService(storedService)
-        const servicelocation = getStorage('service-location')
-        setServiceLocation(servicelocation)
-    }, [])
+        const storedService = getStorage('service-services');
+        setService(storedService);
+        const servicelocation = getStorage('service-location');
+        setServiceLocation(servicelocation);
+    }, []);
 
     const handleVehicleSelectionChange = (
         year: string,
         make: string,
         model: string
     ) => {
-        setSelectedYear(year)
-        setSelectedMake(make)
-        setSelectedModel(model)
-    }
+        setSelectedYear(year);
+        setSelectedMake(make);
+        setSelectedModel(model);
+    };
 
     const handleContinue = () => {
         if (selectedYear == '') {
-            alert('Please select Year')
-            return
+            alert('Please select Year');
+            return;
         }
         if (selectedMake == '') {
-            alert('Please select Make')
-            return
+            alert('Please select Make');
+            return;
         }
         if (selectedModel == '') {
-            alert('Please select Model')
-            return
+            alert('Please select Model');
+            return;
         }
-        setStorage('selectedYear', selectedYear)
-        setStorage('selectedMake', selectedMake)
-        setStorage('selectedModel', selectedModel)
-        router.replace('/get-quote/estimates')
-    }
-    const router = useRouter()
+        setStorage('selectedYear', selectedYear);
+        setStorage('selectedMake', selectedMake);
+        setStorage('selectedModel', selectedModel);
+        router.replace('/get-quote/estimates');
+    };
+    const router = useRouter();
     return (
         <div className="min-h-[100vh] bg-[#f4f6fa] min-w-full flex flex-col">
             <ServiceHeader progressNumber={2} progressTitle="Vehicle" />
@@ -142,13 +142,13 @@ export default function VehicleSelect() {
                                             fillRule="evenodd"
                                         />
                                     </svg>
-                                    <div className="ml-2 text-[14px] font-bold">
+                                    <div className="ml-2 text-[14px] font-bold text-black">
                                         Location
                                     </div>
                                 </div>
 
                                 <div className="py-[20px] px-[16px]">
-                                    <div className="text-[16px]">
+                                    <div className="text-[16px] text-black">
                                         {serviceLocation}
                                     </div>
                                 </div>
@@ -169,13 +169,13 @@ export default function VehicleSelect() {
                                             fillRule="evenodd"
                                         />
                                     </svg>
-                                    <div className="ml-2 text-[14px] font-bold">
+                                    <div className="ml-2 text-[14px] font-bold text-black">
                                         Services
                                     </div>
                                 </div>
 
                                 <div className="py-[20px] px-[16px]">
-                                    <div className="text-[16px]">
+                                    <div className="text-[16px] text-black">
                                         {service == null
                                             ? 'No vehicle service'
                                             : service}
@@ -198,13 +198,13 @@ export default function VehicleSelect() {
                                             fillRule="evenodd"
                                         />
                                     </svg>
-                                    <div className="ml-2 text-[14px] font-bold">
+                                    <div className="ml-2 text-[14px] font-bold text-black">
                                         Vehicle
                                     </div>
                                 </div>
 
                                 <div className="py-[20px] px-[16px]">
-                                    <div className="text-[16px]">
+                                    <div className="text-[16px] text-black">
                                         No vehicle currently selected.
                                     </div>
                                 </div>
@@ -216,5 +216,5 @@ export default function VehicleSelect() {
 
             <ServiceFooter />
         </div>
-    )
+    );
 }

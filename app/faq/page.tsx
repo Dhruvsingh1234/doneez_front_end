@@ -1,4 +1,4 @@
-import CustomHeader from '../headers/CustomHeader'
+import CustomHeader from '../headers/CustomHeader';
 
 export default function Faq() {
     return (
@@ -396,113 +396,133 @@ export default function Faq() {
                     </div>
                 </div>
 
-                <div className='my-3 text-[18px]'>
-                    Note: These rates are applied to the quoted amount to determine the required deposit.
-                    The rate applicable is based on the tier into which the quoted amount falls. For
-                    example, if the quote is exactly $5,000, the entire amount is subject to the 2% rate,
-                    resulting in a required deposit of $100.
+                <div className="my-3 text-[18px]">
+                    Note: These rates are applied to the quoted amount to
+                    determine the required deposit. The rate applicable is based
+                    on the tier into which the quoted amount falls. For example,
+                    if the quote is exactly $5,000, the entire amount is subject
+                    to the 2% rate, resulting in a required deposit of $100.
                 </div>
 
-                <div className='my-3 text-[24px] font-bold'>
-                    Can I sign up as a DoneEZ auto service professional if I don't own a shop?
+                <div className="my-3 text-[24px] font-bold">
+                    Can I sign up as a DoneEZ auto service professional if I
+                    don't own a shop?
                 </div>
 
-                <div className='my-3 text-[18px]'>
-                    Absolutely! Whether you operate a brick-and-mortar auto repair shop or work as a
-                    mobile mechanic, you are welcome to join DoneEZ as an auto service professional. We
-                    value a commitment to excellent customer service and high-quality auto repairs, and we
-                    rely on customer ratings and reviews to ensure that all of our providers meet these
-                    standards. Our aim is to build trust in an industry where trust has been lacking, and we
-                    believe that by bringing together top-rated service providers from all backgrounds, we
-                    can help achieve this goal. So whether you have a physical shop or prefer to work on
-                    the go, sign up with DoneEZ today and start providing reliable, trustworthy auto services
-                    to customers in your area.
+                <div className="my-3 text-[18px]">
+                    Absolutely! Whether you operate a brick-and-mortar auto
+                    repair shop or work as a mobile mechanic, you are welcome to
+                    join DoneEZ as an auto service professional. We value a
+                    commitment to excellent customer service and high-quality
+                    auto repairs, and we rely on customer ratings and reviews to
+                    ensure that all of our providers meet these standards. Our
+                    aim is to build trust in an industry where trust has been
+                    lacking, and we believe that by bringing together top-rated
+                    service providers from all backgrounds, we can help achieve
+                    this goal. So whether you have a physical shop or prefer to
+                    work on the go, sign up with DoneEZ today and start
+                    providing reliable, trustworthy auto services to customers
+                    in your area.
                 </div>
 
-                <div className='my-3 text-[24px] font-bold'>
+                <div className="my-3 text-[24px] font-bold">
                     I have further Inquiries. Who do I contact?
                 </div>
-                <div className='my-3 text-[18px]'>
-                    For any further assistance or inquiries, please do not hesitate to reach out to us at
-                    support@doneez.com. We will be happy to assist you in any way we can.
+                <div className="my-3 text-[18px]">
+                    For any further assistance or inquiries, please do not
+                    hesitate to reach out to us at support@doneez.com. We will
+                    be happy to assist you in any way we can.
                 </div>
 
-                <div className='my-3 text-[36px] font-bold'>
+                <div className="my-3 text-[36px] font-bold">
                     Supplier's FAQs
                 </div>
-                <div className='my-3 text-[24px] font-bold'>
-                    What are the benefits of joining the DoneEZ platform to list parts for sale?
+                <div className="my-3 text-[24px] font-bold">
+                    What are the benefits of joining the DoneEZ platform to list
+                    parts for sale?
                 </div>
-                <div className='my-3 text-[18px]'>
-                    As a supplier, selling on the DoneEZ dashboard offers several benefits:
+                <div className="my-3 text-[18px]">
+                    As a supplier, selling on the DoneEZ dashboard offers
+                    several benefits:
                 </div>
 
                 <div className="p-4">
                     <ul className="list-disc pl-6 space-y-2">
                         <li className="text-[18px] font-bold">
-                            Increased Sales: Showcase your offerings to our reputable auto service
-                            professionals, boosting your sales potential.
+                            Increased Sales: Showcase your offerings to our
+                            reputable auto service professionals, boosting your
+                            sales potential.
                         </li>
                         <li className="text-[18px] font-bold">
-                            Correct Installation: Ensure that your parts are installed correctly, reducing part
-                            returns, costly replacements, and loss of sales due to defective parts.
+                            Correct Installation: Ensure that your parts are
+                            installed correctly, reducing part returns, costly
+                            replacements, and loss of sales due to defective
+                            parts.
                         </li>
                         <li className="text-[18px] font-bold">
-                            Long-Term Relationships: Establish long-term relationships with service
-                            professionals, enhancing collaboration and trust.
+                            Long-Term Relationships: Establish long-term
+                            relationships with service professionals, enhancing
+                            collaboration and trust.
                         </li>
                         <li className="text-[18px] font-bold">
-                            Brand Visibility: Increase your brand visibility in the industry by being associated
-                            with a trusted platform.
+                            Brand Visibility: Increase your brand visibility in
+                            the industry by being associated with a trusted
+                            platform.
                         </li>
                     </ul>
                 </div>
 
-                <div className='my-3 text-[24px] font-bold'>
+                <div className="my-3 text-[24px] font-bold">
                     Who can join as a supplier on the DoneEZ platform?
                 </div>
-                <div className='my-3 text-[18px]'>
-                    We only partner with local remanufactured parts suppliers and local recycled auto parts
-                    suppliers at this time.
+                <div className="my-3 text-[18px]">
+                    We only partner with local remanufactured parts suppliers
+                    and local recycled auto parts suppliers at this time.
                 </div>
 
-                <div className='my-3 text-[24px] font-bold'>
+                <div className="my-3 text-[24px] font-bold">
                     Is there a fee to join the platform as a supplier?
                 </div>
-                <div className='my-3 text-[18px]'>
-                    Joining the DoneEZ platform is free for third party suppliers. However, there is a 10%
-                    transaction fee on sales made through our platform.
+                <div className="my-3 text-[18px]">
+                    Joining the DoneEZ platform is free for third party
+                    suppliers. However, there is a 10% transaction fee on sales
+                    made through our platform.
                 </div>
 
-                <div className='my-3 text-[24px] font-bold'>
-                    Do you allow OEM and new aftermarket parts suppliers on the platform?
+                <div className="my-3 text-[24px] font-bold">
+                    Do you allow OEM and new aftermarket parts suppliers on the
+                    platform?
                 </div>
-                <div className='my-3 text-[18px]'>
-                    No, we do not partner with OEM and new aftermarket parts suppliers. Our platform
-                    focuses on remanufactured and recycled auto parts. Mechanics are welcome to order
-                    OEM and new aftermarket parts from their own suppliers if needed.
-                </div>
-
-                <div className='my-3 text-[24px] font-bold'>
-                    Why don't you partner with OEM and new aftermarket parts suppliers?
-                </div>
-                <div className='my-3 text-[18px]'>
-                    We believe that mechanics can easily order OEM and new aftermarket parts from
-                    platforms like PartsTech, so we focus on providing a marketplace for remanufactured
-                    and recycled parts to support local suppliers and promote sustainability.
+                <div className="my-3 text-[18px]">
+                    No, we do not partner with OEM and new aftermarket parts
+                    suppliers. Our platform focuses on remanufactured and
+                    recycled auto parts. Mechanics are welcome to order OEM and
+                    new aftermarket parts from their own suppliers if needed.
                 </div>
 
-                <div className='my-3 text-[24px] font-bold'>
+                <div className="my-3 text-[24px] font-bold">
+                    Why don't you partner with OEM and new aftermarket parts
+                    suppliers?
+                </div>
+                <div className="my-3 text-[18px]">
+                    We believe that mechanics can easily order OEM and new
+                    aftermarket parts from platforms like PartsTech, so we focus
+                    on providing a marketplace for remanufactured and recycled
+                    parts to support local suppliers and promote sustainability.
+                </div>
+
+                <div className="my-3 text-[24px] font-bold">
                     I have further inquiries. Who do I contact?
                 </div>
-                <div className='my-3 text-[18px]'>
-                    If you have further inquiries, please feel free to contact our customer support team.
-                    They will be happy to assist you and provide you with any additional information you
-                    may need. You can find our contact details on our website or reach out to us through
-                    our support email support@doneez.com.
+                <div className="my-3 text-[18px]">
+                    If you have further inquiries, please feel free to contact
+                    our customer support team. They will be happy to assist you
+                    and provide you with any additional information you may
+                    need. You can find our contact details on our website or
+                    reach out to us through our support email
+                    support@doneez.com.
                 </div>
-
             </div>
         </div>
-    )
+    );
 }
