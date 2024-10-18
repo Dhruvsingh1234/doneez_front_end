@@ -55,7 +55,7 @@ const autoServices: ServiceNode[] = [
                 ],
             },
             {
-                name: 'Heating & Air Conditioning',
+                name: 'Heating and Air Conditioning',
                 services: [
                     'HVAC System Inspection',
                     'AC Recharge and Repair',
@@ -94,6 +94,56 @@ const autoServices: ServiceNode[] = [
                     'CV Joint Replacement',
                 ],
             },
+            {
+                name: 'EV & Hybrid Services',
+                subcategories: [
+                    {
+                        name: 'Maintenance Services',
+                        services: [
+                            'Routine inspections and maintenance', 
+                            'Brake system checks', 
+                            'Tire rotation and alignment', 
+                            'Fluid checks (coolant, wiper fluid, etc.)'
+                        ]
+                    },
+                    {
+                        name: 'Software & Firmware Updates',
+                        services: [
+                            'Over-the-air updates', 
+                            'Infotainment system upgrades', 
+                        ]
+                    },
+                    {
+                        name: 'Battery Services',
+                        services: [
+                            'Battery inspection and diagnostics', 
+                            'Battery swaps',
+                            'Battery recycling and disposal' 
+                        ]
+                    },
+                    {
+                        name: 'Hybrid Diagnostics',
+                        services: [
+                            'System diagnostics for hybrid components', 
+                            'Performance assessments',
+                        ]
+                    },
+                    {
+                        name: 'Electric Motor & Powertrain Repairs',
+                        services: [
+                            'Repairs and replacements of electric motors', 
+                            'Powertrain system diagnostics',
+                        ]
+                    },
+                    {
+                        name: 'Performance Tuning & Customization',
+                        services: [
+                            'Efficiency upgrades', 
+                            'Custom software modifications',
+                        ]
+                    },
+                ]
+            }
         ],
     },
 
@@ -172,7 +222,189 @@ const autoServices: ServiceNode[] = [
     },
 
     {
-        name: 'Auto Detailing',
+        name: 'Auto Customization',
+        subcategories: [
+            {
+                name: 'Exterior Modifications',
+                subcategories: [
+                    {
+                        name: 'Body Kits',
+                        services: ['Custom bumpers, side skirts, and spoilers']
+                    },
+                    {
+                        name: 'Paint and Wraps',
+                        services: ['Unique custom paint jobs and vinyl wraps']
+                    },
+                    {
+                        name: 'Lighting',
+                        services: ['Upgraded headlights, taillights and underglow lighting']
+                    },
+                    {
+                        name: 'Wheels and Tires',
+                        services: ['Custom rims and performance tires']
+                    }
+                ]
+            },
+            {
+                name: 'Overland Accessories',
+                subcategories: [
+                    {
+                        name: 'Roof Racks',
+                        services: ['For additional cargo space']
+                    },
+                    {
+                        name: 'Cargo Carriers',
+                        services: ['Secure transportation solutions']
+                    },
+                    {
+                        name: 'Storage Lockers',
+                        services: ['Organized storage for gear and supplies']
+                    },
+                    {
+                        name: 'Camping Supplies',
+                        services: ['Equipment for outdoor adventures']
+                    },
+                    {
+                        name: 'Tow Accessories',
+                        services: ['Enhancements for towing capabilities', 'Trailers', 'Hitches']
+                    },
+                ]
+            },
+            {
+                name: 'Suspension Upgrades',
+                subcategories: [
+                    {
+                        name: 'Baja Kits',
+                        services: ['Off-road suspension systems']
+                    },
+                    {
+                        name: 'Solid Axle Kits',
+                        services: ['Improved durability and performance']
+                    },
+                    {
+                        name: 'Custom 3-4 Link Kits',
+                        services: ['Enhanced suspension articulation']
+                    },
+                    {
+                        name: 'Straight Axle',
+                        services: ['For rugged off-road performance']
+                    },
+                    {
+                        name: 'A-Arm Kits',
+                        services: ['Improved handling and stability']
+                    },
+                    {
+                        name: 'Air Springs',
+                        services: ['Adjustable suspension for load leveling']
+                    },
+                    {
+                        name: 'Leveling Kits',
+                        services: ['To raise the front of the vehicle']
+                    },
+                    {
+                        name: 'Coil Springs',
+                        services: ['For better ride quality and handling']
+                    },
+                ]
+            },
+            {
+                name: 'Interior Modifications',
+                subcategories: [
+                    {
+                        name: 'Upholstery',
+                        services: ['Custom seats, headliners, and door panels']
+                    },
+                    {
+                        name: 'Sound Systems',
+                        services: ['Upgraded audio systems, subwoofers, and speakers']
+                    },
+                    {
+                        name: 'Dashboards and Consoles',
+                        services: ['Custom gauges, screens, and control interfaces']
+                    },
+                    {
+                        name: 'Flooring',
+                        services: ['Custom mats and carpets']
+                    }
+                ]
+            },
+            {
+                name: 'Performance Enhancements',
+                subcategories: [
+                    {
+                        name: 'Engine Modifications',
+                        services: ['Turbochargers, superchargers, and performance tuning']
+                    },
+                    {
+                        name: 'Exhaust Systems',
+                        services: ['Upgraded exhaust for improved sound and performance']
+                    },
+                    {
+                        name: 'Suspension Upgrades',
+                        services: ['Coilovers, lift kits, and lowering kits']
+                    },
+                    {
+                        name: 'Braking Systems',
+                        services: ['Upgraded brake pads, rotors, and calipers']
+                    }
+                ]
+            },
+            {
+                name: 'Technology Upgrades',
+                subcategories: [
+                    {
+                        name: 'Navigation Systems',
+                        services: ['Installation of GPS and multimedia systems']
+                    },
+                    {
+                        name: 'Bluetooth and Connectivity',
+                        services: ['Hands-free and streaming capabilities']
+                    },
+                    {
+                        name: 'Dash Cams',
+                        services: ['Installation of cameras for safety and security']
+                    },
+                ]
+            },
+            {
+                name: 'Protection and Maintenance',
+                subcategories: [
+                    {
+                        name: 'Ceramic Coatings',
+                        services: ['For paint protection and easy cleaning']
+                    },
+                    {
+                        name: 'Window Tinting',
+                        services: ['UV protection and privacy enhancements']
+                    },
+                    {
+                        name: 'Clear Bra',
+                        services: ['Protective film for high-impact areas']
+                    },
+                ]
+            },
+            {
+                name: 'Restoration and Classics',
+                subcategories: [
+                    {
+                        name: 'Classic Car Restoration',
+                        services: ['Refurbishing vintage cars to their original glory']
+                    },
+                    {
+                        name: 'Custom Builds',
+                        services: ['Building unique vehicles from the ground up']
+                    },
+                    {
+                        name: 'Electric Conversions',
+                        services: ['Converting classic cars to electric power']
+                    },
+                ]
+            },
+        ],
+    },
+
+    {
+        name: 'Auto Detail',
         subcategories: [
             {
                 name: 'Exterior Detailing',
