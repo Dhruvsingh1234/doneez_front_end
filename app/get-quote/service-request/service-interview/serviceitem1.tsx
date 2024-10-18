@@ -563,10 +563,6 @@ const autoServices: ServiceNode[] = [
         ],
     },
     {
-        name: 'Heating & A/C',
-        services: ['Air Conditioning Diagnosis'],
-    },
-    {
         name: 'Auto Upholstery',
         services: [
             'Leather Seat Repair',
