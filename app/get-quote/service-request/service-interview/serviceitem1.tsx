@@ -65,7 +65,17 @@ const autoServices: ServiceNode[] = [
                 ],
             },
             {
-                name: 'Maintenance',
+                name: 'Diagnostic and Inspection',
+                services: [
+                    'Pre-Purchase Vehicle Inspection',
+                    'Check Engine Light Diagnosis',
+                    'Vehicle Starting Issues Diagnosis',
+                    'Towing and Roadside Assistance',
+                    'Emissions Testing (Smog Check)',
+                ],
+            },
+            {
+                name: 'Scheduled Maintenance',
                 services: [
                     'Oil Change and Filter Replacement',
                     'Fluid Flush and Replacement',
@@ -73,7 +83,7 @@ const autoServices: ServiceNode[] = [
                     'Spark Plug Replacement',
                     'Air Filter Replacement',
                 ],
-            },
+            },                        
             {
                 name: 'Steering & Suspension',
                 services: [
@@ -215,10 +225,25 @@ const autoServices: ServiceNode[] = [
                     'Vinyl Wrapping',
                     'Decal Application',
                     'Hydrographic Dipping',
+                    'Custom Vehicle Wraps', 
+                    'Powder Coating'
+                ],
+            },
+            {
+                name: 'Auto Upholstery',
+                services: [
+                    'Leather Seat Repair',
+                    'Vinyl Seat Repair',
+                    'Cloth Seat Repair',
+                    'Dashboard Repair',
+                    'Center Console Repair',
+                    'Headliner Replacement',
+                    'Carpet Repair and Replacement',
+                    'Steering Wheel Repair',
+                    'Repairs for Rips, Tears, and Burns',
                 ],
             },
         ],
-        services: ['Custom Vehicle Wraps', 'Powder Coating'],
     },
 
     {
@@ -551,30 +576,6 @@ const autoServices: ServiceNode[] = [
             },
         ],
         services: ['Tire Replacement'],
-    },
-    {
-        name: 'Maintenance and Safety',
-        services: [
-            'Pre-Purchase Vehicle Inspection',
-            'Check Engine Light Diagnosis',
-            'Vehicle Starting Issues Diagnosis',
-            'Towing and Roadside Assistance',
-            'Emissions Testing (Smog Check)',
-        ],
-    },
-    {
-        name: 'Auto Upholstery',
-        services: [
-            'Leather Seat Repair',
-            'Vinyl Seat Repair',
-            'Cloth Seat Repair',
-            'Dashboard Repair',
-            'Center Console Repair',
-            'Headliner Replacement',
-            'Carpet Repair and Replacement',
-            'Steering Wheel Repair',
-            'Repairs for Rips, Tears, and Burns',
-        ],
     },
 ];
 
