@@ -59,6 +59,7 @@ export default function VehicleSelect() {
             <div className="flex-1 max-w-[1024px] w-full mx-auto px-4 py-8 max-sm:bg-white max-sm:max-w-[540px] max-sm:shadow-none max-sm:min-h-full max-sm:h-auto">
                 <div className="flex flex-row items-center pb-4">
                     <button
+                        onClick={() => router.replace('/get-quote/service-request/service-note')}
                         className="max-md:fixed max-md:left-[12px] max-md:top-[52px] max-md:translate-y-[-50%] flex items-center justify-center shadow-[0_2px_3px_0_#dce0e6] w-[40px] h-[40px] rounded-[50%] bg-white mr-4 text-[#788391]
                           active:border-solid active:border-red-300 active:border-[2px]"
                     >
