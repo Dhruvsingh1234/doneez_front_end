@@ -6,15 +6,15 @@ interface mechaniProps {
     mechanicName: string
     rating: number
     reviews: number
-    distance: number
+    distance?: number
     address: string
-    zipcode: number
+    zipcode: string
 }
 
 export default function MechanicItem({mechanicName, rating, reviews, distance, address, zipcode}:mechaniProps) {
     return (
         <>
-            <div className="pt-8">
+            <div className="pt-8 px-4 pb-4 cursor-pointer hover:bg-slate-100">
                 <h1 className="text-[#009ed5] text-4xl font-semibold max-md:text-2xl sm:text-xl">
                     {mechanicName}
                 </h1>

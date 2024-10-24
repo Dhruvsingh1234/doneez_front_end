@@ -1,11 +1,11 @@
 import { getRequest } from './axios';
-import { MechanicProfile } from './types';
+import { MechanicProfileType } from './types';
 
 // api/mechanics.ts
-export async function fetchMechanics(
+export async function fetchMechanicsByDistance(
     customer_zip: string,
     max_distance: number
-): Promise<MechanicProfile[]> {
+): Promise<MechanicProfileType[]> {
     try {
         const URL = 'users/mechanics/distance-filter/';
 
@@ -14,7 +14,7 @@ export async function fetchMechanics(
             max_distance,
         };
 
-        const response = await getRequest<MechanicProfile[]>(URL, params);
+        const response = await getRequest<MechanicProfileType[]>(URL, params);
         return response.data;
     } catch (error) {
         console.error('Error fetching mechanics:', error);

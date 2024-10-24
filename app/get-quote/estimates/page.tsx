@@ -9,9 +9,19 @@ import Image from 'next/image';
 import { getStorage } from '@/app/utils/helper';
 import { redirect, useRouter } from 'next/navigation';
 import MechanicItem from './mechanicItem';
+import { fetchMechanicsByDistance } from '@/app/utils/api';
+import { MechanicProfileType } from '@/app/utils/types';
+
+interface MechanicsPageProps {
+    searchParams: {
+        customer_zip?: string;
+        max_distance?: string;
+    };
+}
 
 export default function Estimates() {
     const router = useRouter();
+    const [mechanics, setMechanics] = useState<MechanicProfileType[]>([]);
     const [serviceLocation, setServiceLocation] = useState<string | null>(null);
     const [service, setService] = useState<string | null>(null);
     const [serviceVehicle, setServiceVehicle] = useState<string | null>(null);
@@ -39,8 +49,20 @@ export default function Estimates() {
     }, []);
 
     useEffect(() => {
+        const customZipCode = getStorage('customZipCode');
+        const getMechanics = async () => {
+            if (customZipCode !== null) {
+                // Check if customZipCode is not null
+                const data = await fetchMechanicsByDistance(customZipCode, 25);
+                setMechanics(data);
+            } else {
+                console.error('Custom Zip Code is null');
+            }
+        };
 
-    },[])
+        getMechanics();
+        console.log(customZipCode);
+    }, []);
     // If the component hasn't mounted yet, render nothing or a loader
     if (!mounted) {
         return null; // You can replace this with a loading spinner if desired
@@ -80,7 +102,7 @@ export default function Estimates() {
                     <div className="w-2/3 max-md:w-full px-4">
                         <div className="px-4 py-8 max-sm:px-0 max-sm:py-4">
                             {/**/}
-                            <div className="flex flex-row items-start max-lg:flex-col max-lg:gap-4">
+                            <div className="flex flex-row items-start max-lg:flex-col max-lg:gap-4 mb-4">
                                 <button className="max-lg:w-full max-lg:justify-center py-2 px-4 flex flex-row items-center text-white bg-[#009ed5] border-[#009ed5] border-solid border-[1px] active:border-blue-200 rounded-md">
                                     <svg
                                         className="h-[21px]"
@@ -115,9 +137,19 @@ export default function Estimates() {
                                     </div>
                                 </div>
                             </div>
-
-                            <MechanicItem mechanicName='Tuffy Tire & Auto Service - East Colonial' rating={4.3} reviews={140} distance={9.1} address='10938 East Colonial Drive, Orlando, FL' zipcode={32817}/>
-
+                            {
+                                mechanics.map((mechanic, index) => (
+                                    <MechanicItem
+                                        key={index}
+                                        mechanicName={mechanic.business_name}
+                                        rating={mechanic.rating}
+                                        reviews={0}
+                                        distance={mechanic.distance}
+                                        address={mechanic.address + " " + mechanic.address_city + " " + mechanic.address_state}
+                                        zipcode={mechanic.zip_code}
+                                    />
+                                ))
+                            }
 
                             <div className="p-5 rounded-sm border-[1px] border-solid border-[#e5e8ed] shadow-[0_2px_2px_0_rgba(220,224,230,.5)]">
                                 <div className="flex flex-row max-md:flex-col max-md:gap-4 max-md:justify-center md:items-stretch">
@@ -163,7 +195,6 @@ export default function Estimates() {
                             </div>
                         </div>
                     </div>
-
 
                     <div className="w-1/3 px-[8px] py-8 relative max-md:hidden md:pr-8">
                         <div className="w-[1px] absolute top-4 left-[-0.5rem] bottom-4 bg-[#e5e8ed] max-md:hidden"></div>

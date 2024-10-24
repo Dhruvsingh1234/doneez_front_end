@@ -83,6 +83,10 @@ export default function ServiceLocation() {
                 'service-location',
                 suggestion.main_text + ' ' + suggestion.secondary_text
             );
+            setStorage(
+                'customZipCode',
+                suggestion.main_text
+            )
             setSuggestions([]); // Clear suggestions when a place is selected
             router.replace('/get-quote/service-request/service-interview');
         }

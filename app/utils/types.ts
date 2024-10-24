@@ -9,7 +9,7 @@ export interface MechanicAvailability {
     wed: string[];
 }
 
-export interface MechanicProfile {
+export interface MechanicProfileType {
     business_name: string;
     job_title: string;
     web_site: string;
