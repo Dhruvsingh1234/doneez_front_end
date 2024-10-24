@@ -8,14 +8,23 @@ import ServiceHomeSvg from './garage_lift_car.svg';
 import Image from 'next/image';
 import { getStorage } from '@/app/utils/helper';
 import { redirect, useRouter } from 'next/navigation';
+import MechanicItem from './mechanicItem';
 
 export default function Estimates() {
     const router = useRouter();
     const [serviceLocation, setServiceLocation] = useState<string | null>(null);
     const [service, setService] = useState<string | null>(null);
     const [serviceVehicle, setServiceVehicle] = useState<string | null>(null);
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
+        setMounted(true); // Indicate that the component has mounted
+
+        const accessToken = getStorage('access_token');
+        if (accessToken == null) {
+            redirect('/get-quote/sign-in');
+            return;
+        }
         // This runs only on the client side after the component mounts
         const storedService = getStorage('service-services');
         setService(storedService);
@@ -29,9 +38,12 @@ export default function Estimates() {
         setServiceVehicle(vehicleInfo);
     }, []);
 
-    const accessToken = getStorage('access_token');
-    if (accessToken == null) {
-        redirect('/get-quote/sign-in');
+    useEffect(() => {
+
+    },[])
+    // If the component hasn't mounted yet, render nothing or a loader
+    if (!mounted) {
+        return null; // You can replace this with a loading spinner if desired
     }
 
     return (
@@ -104,7 +116,9 @@ export default function Estimates() {
                                 </div>
                             </div>
 
-                            <div className="mt-4 mb-6 h-[1px] bg-[#e5e8ed] w-full"></div>
+                            <MechanicItem mechanicName='Tuffy Tire & Auto Service - East Colonial' rating={4.3} reviews={140} distance={9.1} address='10938 East Colonial Drive, Orlando, FL' zipcode={32817}/>
+
+
                             <div className="p-5 rounded-sm border-[1px] border-solid border-[#e5e8ed] shadow-[0_2px_2px_0_rgba(220,224,230,.5)]">
                                 <div className="flex flex-row max-md:flex-col max-md:gap-4 max-md:justify-center md:items-stretch">
                                     <div className="flex justify-center md:max-w-[25%] px-4 max-md:border-none max-md:shadow-none border-solid border-[1px] border-[#e8e5ed] shadow-[0_2px_2px_0_rgba(220,224,230,.5)]">
@@ -149,6 +163,8 @@ export default function Estimates() {
                             </div>
                         </div>
                     </div>
+
+
                     <div className="w-1/3 px-[8px] py-8 relative max-md:hidden md:pr-8">
                         <div className="w-[1px] absolute top-4 left-[-0.5rem] bottom-4 bg-[#e5e8ed] max-md:hidden"></div>
                         <div className="">
