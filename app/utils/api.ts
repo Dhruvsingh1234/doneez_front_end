@@ -22,3 +22,17 @@ export async function fetchMechanicsByDistance(
         return [];
     }
 }
+
+export async function fetchMechanicProfileById(
+    id: string | null
+): Promise<MechanicProfileType | null> {
+    try{
+        const URL = `/users/mechanic-profile/${id}/`;
+
+        const response = await getRequest<MechanicProfileType>(URL);
+        return response.data
+    } catch (error) {
+        console.error('Error fetching mechanics:', error);
+        return null
+    }
+}

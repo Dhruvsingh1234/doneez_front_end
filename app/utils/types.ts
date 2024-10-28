@@ -1,4 +1,3 @@
-// types.ts
 export interface MechanicAvailability {
     fri: string[];
     mon: string[];
@@ -10,6 +9,7 @@ export interface MechanicAvailability {
 }
 
 export interface MechanicProfileType {
+    id: number;
     business_name: string;
     job_title: string;
     web_site: string;

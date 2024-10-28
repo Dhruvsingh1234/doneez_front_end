@@ -6,18 +6,12 @@ import ServiceFooter from '@/app/footers/service_footer';
 import ServiceHeader from '@/app/headers/ServiceHeader';
 import ServiceHomeSvg from './garage_lift_car.svg';
 import Image from 'next/image';
-import { getStorage } from '@/app/utils/helper';
+import { getStorage, setStorage } from '@/app/utils/helper';
 import { redirect, useRouter } from 'next/navigation';
 import MechanicItem from './mechanicItem';
 import { fetchMechanicsByDistance } from '@/app/utils/api';
 import { MechanicProfileType } from '@/app/utils/types';
-
-interface MechanicsPageProps {
-    searchParams: {
-        customer_zip?: string;
-        max_distance?: string;
-    };
-}
+import SkeletonComponent from './skeleton';
 
 export default function Estimates() {
     const router = useRouter();
@@ -138,9 +132,10 @@ export default function Estimates() {
                                 </div>
                             </div>
                             {
-                                mechanics.map((mechanic, index) => (
+                                mechanics.length != 0 ? mechanics.map((mechanic, index) => (
                                     <MechanicItem
                                         key={index}
+                                        id = {mechanic.id}
                                         mechanicName={mechanic.business_name}
                                         rating={mechanic.rating}
                                         reviews={0}
@@ -149,6 +144,12 @@ export default function Estimates() {
                                         zipcode={mechanic.zip_code}
                                     />
                                 ))
+                                :
+                                <>
+                                    <SkeletonComponent/>
+                                    <SkeletonComponent/>
+                                    <SkeletonComponent/>
+                                </>
                             }
 
                             <div className="p-5 rounded-sm border-[1px] border-solid border-[#e5e8ed] shadow-[0_2px_2px_0_rgba(220,224,230,.5)]">

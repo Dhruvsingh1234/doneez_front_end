@@ -1,8 +1,10 @@
 'use client'
 
 import { Rating } from '@smastrom/react-rating'
-
+import { setStorage } from '@/app/utils/helper'
+import { useRouter } from 'next/navigation'
 interface mechaniProps {
+    id: number
     mechanicName: string
     rating: number
     reviews: number
@@ -11,10 +13,16 @@ interface mechaniProps {
     zipcode: string
 }
 
-export default function MechanicItem({mechanicName, rating, reviews, distance, address, zipcode}:mechaniProps) {
+export default function MechanicItem({id, mechanicName, rating, reviews, distance, address, zipcode}:mechaniProps) {
+    const router = useRouter()
+    const enterProfile = () => {
+        setStorage('selectedId', String(id))
+        router.replace('/get-quote/profile')
+    }
     return (
-        <>
-            <div className="pt-8 px-4 pb-4 cursor-pointer hover:bg-slate-100">
+        <div>
+            <div className="pt-8 px-4 pb-4 cursor-pointer hover:bg-slate-100"
+                onClick={enterProfile}>
                 <h1 className="text-[#009ed5] text-4xl font-semibold max-md:text-2xl sm:text-xl">
                     {mechanicName}
                 </h1>
@@ -34,6 +42,6 @@ export default function MechanicItem({mechanicName, rating, reviews, distance, a
                 </div>
             </div>
             <div className="mt-4 mb-6 h-[1px] bg-[#e5e8ed] w-full"></div>
-        </>
+        </div>
     );
 }
