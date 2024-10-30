@@ -40,10 +40,6 @@ const CustomToast = ({
 );
 
 export default function AdminSignIn() {
-    const accessToken = getStorage('admin-access_token');
-    if (accessToken) {
-        redirect('/admin');
-    }
     const router = useRouter();
     const [showPassword, setShowPassword] = useState(false);
     const handleShowChange = () => {

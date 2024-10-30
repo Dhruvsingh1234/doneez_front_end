@@ -4,6 +4,7 @@ import { Tabs, Tab, Card, CardBody, Input, Button } from '@nextui-org/react';
 import { useEffect, useState } from 'react';
 import { getStorage } from '../utils/helper';
 import { redirect } from 'next/navigation';
+import MechanicProfileList from './components/mechanis';
 
 export default function Admin() {
     const [selected, setSelected] = useState<string>('Customers');
@@ -43,16 +44,7 @@ export default function Admin() {
                             </Card>
                         </Tab>
                         <Tab key={'Mechanics'} title="Mechanics">
-                            <Card>
-                                <CardBody>
-                                    Lorem ipsum dolor sit amet, consectetur
-                                    adipiscing elit, sed do eiusmod tempor
-                                    incididunt ut labore et dolore magna aliqua.
-                                    Ut enim ad minim veniam, quis nostrud
-                                    exercitation ullamco laboris nisi ut aliquip
-                                    ex ea commodo consequat.
-                                </CardBody>
-                            </Card>
+                            <MechanicProfileList/>
                         </Tab>
                         <Tab key={'All Quotes'} title="All Quotes">
                             <Card>
