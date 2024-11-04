@@ -1,4 +1,3 @@
-import { param } from 'framer-motion/m';
 import { getRequest } from './axios';
 import { MechanicProfileType, PaginatedMechanicProfileResponse, ValidationErrorResponse } from './types';
 
@@ -38,18 +37,22 @@ export async function fetchMechanicProfileById(
     }
 }
 
+interface FetchMechanicsParams {
+    search?: string;
+    available_day_time?: string;
+    page?: number;
+    page_size?: number;
+    [key: string]: any; // For additional filters
+}
+
 export async function fetchMechanicProfileAll(
-    filters: Record<string, string>,
-    page: number = 1,
-    pageSize: number = 10
+    params: FetchMechanicsParams
 ): Promise<PaginatedMechanicProfileResponse> {
     try{
         const URL = '/users/mechanic-profile-all/'
 
         const response = await getRequest<PaginatedMechanicProfileResponse>(URL, {
-            ...filters,
-            page,
-            page_size: pageSize
+            ...params
         })
 
         return response.data

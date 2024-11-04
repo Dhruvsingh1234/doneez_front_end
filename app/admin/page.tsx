@@ -2,7 +2,7 @@
 
 import { Tabs, Tab, Card, CardBody, Input, Button } from '@nextui-org/react';
 import { useEffect, useState } from 'react';
-import { getStorage } from '../utils/helper';
+import { getStorage, isTokenExpired } from '../utils/helper';
 import { redirect } from 'next/navigation';
 import MechanicProfileList from './components/mechanis';
 
@@ -10,8 +10,7 @@ export default function Admin() {
     const [selected, setSelected] = useState<string>('Customers');
     useEffect(() => {
         const accessToken = getStorage('admin-access_token');
-        console.log(accessToken);
-        if (accessToken == null) {
+        if(isTokenExpired(accessToken)){
             redirect('/admin/sign-in');
         }
     }, []);

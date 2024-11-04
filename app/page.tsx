@@ -1,21 +1,18 @@
 'use client';
 
 import CustomHeader from './headers/CustomHeader';
-import Link from 'next/link';
-import { getStorage } from './utils/helper';
+import { getStorage, isTokenExpired } from './utils/helper';
 import { redirect, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { Button } from '@nextui-org/react';
 import Landing from './component/landing';
 import ServiceFooter from './footers/service_footer';
 
 export default function Home() {
-    const router = useRouter();
     useEffect(() => {
         const accessToken = getStorage('access_token');
         console.log(accessToken);
-        if (accessToken != null) {
-            redirect('/dashboard');
+        if(!isTokenExpired(accessToken)){
+          redirect('/dashboard');
         }
     }, []);
 
