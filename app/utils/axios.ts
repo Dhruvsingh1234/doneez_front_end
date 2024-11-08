@@ -28,7 +28,31 @@ function createAxiosClient(contentType: string): AxiosInstance {
         (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
             const token = getStorage('access_token');
             if (token) {
-                config.headers.Authorization = token;
+                config.headers.Authorization = `Bearer ${token}`;
+            }
+            return config;
+        }
+    );
+
+    return client;
+}
+
+// Function to create an Axios instance with default settings
+function adminCreateAxiosClient(contentType: string): AxiosInstance {
+    const client = axios.create({
+        baseURL,
+        timeout: 5000,
+        headers: {
+            'Content-Type': contentType,
+            Accept: contentType,
+        },
+    });
+
+    client.interceptors.request.use(
+        (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
+            const token = getStorage('admin-access_token');
+            if (token) {
+                config.headers.Authorization = `Bearer ${token}`;
             }
             return config;
         }
@@ -39,6 +63,7 @@ function createAxiosClient(contentType: string): AxiosInstance {
 
 // Axios instances for different content types
 const axiosClient = createAxiosClient('application/json');
+const adminAxiosClient = adminCreateAxiosClient('application/json')
 const axiosClientWithFiles = createAxiosClient('multipart/form-data');
 
 // HTTP request functions
@@ -50,11 +75,27 @@ export function getRequest<T = any>(
     return axiosClient.get<T>(URL, { params, ...option });
 }
 
+// HTTP request functions
+export function adminGetRequest<T = any>(
+    URL: string,
+    params?: any,
+    option?: AxiosRequestConfig
+): Promise<AxiosResponse<T>> {
+    return adminAxiosClient.get<T>(URL, { params, ...option });
+}
+
 export function postRequest<T = any>(
     URL: string,
     payload?: any
 ): Promise<AxiosResponse<T>> {
     return axiosClient.post<T>(URL, payload);
+}
+
+export function adminPostRequest<T = any>(
+    URL: string,
+    payload?: any
+): Promise<AxiosResponse<T>> {
+    return adminAxiosClient.post<T>(URL, payload);
 }
 
 export function patchRequest<T = any>(
@@ -64,6 +105,13 @@ export function patchRequest<T = any>(
     return axiosClient.patch<T>(URL, payload);
 }
 
+export function adminPatchRequest<T = any>(
+    URL: string,
+    payload?: any
+): Promise<AxiosResponse<T>> {
+    return adminAxiosClient.patch<T>(URL, payload);
+}
+
 export function putRequest<T = any>(
     URL: string,
     payload?: any
@@ -71,8 +119,19 @@ export function putRequest<T = any>(
     return axiosClient.put<T>(URL, payload);
 }
 
+export function adminPutRequest<T = any>(
+    URL: string,
+    payload?: any
+): Promise<AxiosResponse<T>> {
+    return adminAxiosClient.put<T>(URL, payload);
+}
+
 export function deleteRequest<T = any>(URL: string): Promise<AxiosResponse<T>> {
     return axiosClient.delete<T>(URL);
+}
+
+export function adminDeleteRequest<T = any>(URL: string): Promise<AxiosResponse<T>> {
+    return adminAxiosClient.delete<T>(URL);
 }
 
 export function postRequestWithFiles<T = any>(

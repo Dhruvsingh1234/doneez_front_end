@@ -1,11 +1,11 @@
 export interface MechanicAvailability {
-    fri: string[];
     mon: string[];
-    san: string[];
-    sat: string[];
-    thr: string[];
     tue: string[];
     wed: string[];
+    thu: string[];
+    fri: string[];
+    sat: string[];
+    sun: string[];
 }
 
 export interface MechanicProfileType {

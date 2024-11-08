@@ -1,4 +1,4 @@
-import { getRequest } from './axios';
+import { adminGetRequest, getRequest } from './axios';
 import { MechanicProfileType, PaginatedMechanicProfileResponse, ValidationErrorResponse } from './types';
 
 // api/mechanics.ts
@@ -51,7 +51,7 @@ export async function fetchMechanicProfileAll(
     try{
         const URL = '/users/mechanic-profile-all/'
 
-        const response = await getRequest<PaginatedMechanicProfileResponse>(URL, {
+        const response = await adminGetRequest<PaginatedMechanicProfileResponse>(URL, {
             ...params
         })
 

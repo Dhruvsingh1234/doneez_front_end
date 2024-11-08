@@ -3,19 +3,24 @@
 import { Tabs, Tab, Card, CardBody, Input, Button } from '@nextui-org/react';
 import { useEffect, useState } from 'react';
 import { getStorage, isTokenExpired } from '../utils/helper';
-import { redirect } from 'next/navigation';
-import MechanicProfileList from './components/mechanis';
+import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
+
+const MechanicProfileList = dynamic(() => import('./components/mechanis'), {
+    ssr: false
+})
 
 export default function Admin() {
+    const router = useRouter()
     const [selected, setSelected] = useState<string>('Customers');
     useEffect(() => {
         const accessToken = getStorage('admin-access_token');
         if(isTokenExpired(accessToken)){
-            redirect('/admin/sign-in');
+            router.replace('/admin/sign-in');
         }
     }, []);
     return (
-        <div className="min-w-full min-h-screen bg-[#f4f6fa] flex flex-col">
+        <div className="min-w-full min-h-screen flex flex-col mb-10">
             <div className="mt-16 flex flex-col items-center w-full">
                 <div className="max-w-[1280px] w-full p-4 sm:p-6 md:p-8 lg:p-10 bg-white rounded-md shadow-[0_2px_2px_0_rgba(224,226,230,.5)]">
                     <Tabs
