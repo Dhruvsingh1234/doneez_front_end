@@ -35,7 +35,7 @@ import { EditIcon } from './EditIcon';
 import { EyeIcon } from './EyeIcon';
 import { DeleteIcon } from './DeleteIcon';
 import { SearchIcon } from './SearchIcon';
-import { getStorage, isTokenExpired } from '@/app/utils/helper';
+import { getStorage, isTokenExpired, setStorage } from '@/app/utils/helper';
 import { useRouter } from 'next/navigation';
 
 // Dynamically import MechanicProfileView
@@ -136,6 +136,10 @@ export default function MechanicProfileList() {
         setView(false);
     }, []);
 
+    const handleEditView = (id:number) => {
+        setStorage('selectedIdforAdmin', id.toString())
+        router.replace('/admin/mechanic-profile-edit/')
+    }
     return (
         <div className="w-full relative">
             {view && selectedId !== null && (
@@ -147,6 +151,7 @@ export default function MechanicProfileList() {
                         label="Search for business name, business info, certification, offered services"
                         isClearable
                         radius="lg"
+                        aria-label='search input'
                         classNames={{
                             label: 'text-black/50 dark:text-white/90',
                             input: [
@@ -296,7 +301,7 @@ export default function MechanicProfileList() {
             {error && <p className="text-red-500">{error}</p>}
             {!loading && !error && (
                 <>
-                    <Table>
+                    <Table aria-label='mechanic profile list'>
                         <TableHeader>
                             <TableColumn>Business Name</TableColumn>
                             <TableColumn>Phone Number</TableColumn>
@@ -327,7 +332,7 @@ export default function MechanicProfileList() {
                                                 </span>
                                             </Tooltip>
                                             <Tooltip content="Edit user">
-                                                <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                                                <span className="text-lg text-default-400 cursor-pointer active:opacity-50" onClick={() => handleEditView(mechanic.id)}>
                                                     <EditIcon />
                                                 </span>
                                             </Tooltip>

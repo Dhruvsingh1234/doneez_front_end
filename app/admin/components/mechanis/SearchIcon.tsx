@@ -9,6 +9,7 @@ export const SearchIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     role="presentation"
     viewBox="0 0 24 24"
     width="1em"
+    aria-label='search icon'
     {...props}
   >
     <path
