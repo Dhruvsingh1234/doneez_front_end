@@ -9,8 +9,6 @@ import Link from 'next/link';
 import toast, { Toaster } from 'react-hot-toast';
 import  MapWithMarker from "../MapWithMarker";
 import ServiceInterView from "../DoneezServices"
-import axios from "axios";
-
 
 
 const MechanicSignupForm: React.FC = () => {
@@ -54,59 +52,33 @@ const MechanicSignupForm: React.FC = () => {
     setCurrentStep((prev) => prev - 1);
   };
 
-//   const handleSubmit = async (e: React.FormEvent) => {
-//     e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
   
-//     // Check if any field is empty
-//     const isFormValid = Object.values(formData).every(value => {
-//       if (Array.isArray(value)) return value.length > 0; // Ensure at least one service is selected
-//       return value.trim() !== ""; // Ensure other fields are not empty
-//     });
+    // Check if any field is empty
+    const isFormValid = Object.values(formData).every(value => {
+      if (Array.isArray(value)) return value.length > 0; // Ensure at least one service is selected
+      return value.trim() !== ""; // Ensure other fields are not empty
+    });
   
-//     if (!isFormValid) {
-//       toast.error("Please fill in all fields before submitting.");
-//       return;
-//     }
-  
-//     setLoading(true);
-//     try {
-//       const ress  = await postRequest("", formData);
-//       console.log(ress);
-//       alert("Signup Successful!");
-//     console.log(formData)
-//     } catch (error) {
-//         console.log(error);
-//       toast.error("Signup Failed. Please try again.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-  
-
-const api = axios.create({
-  baseURL: "https://doneez.com/",
-  timeout: 15000,  
-});
-
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setLoading(true);
-
-  try {
-    const ress = await api.post("/api/users/create-mechanic", formData);
-    alert("Signup Successful!");
-    console.log(ress)
-  } catch (error) {
-    console.log(error);
-    if (axios.isAxiosError(error) && error.code === "ECONNABORTED") {
-      alert("Request timed out. Please check your internet connection or try again.");
-    } else {
-      alert("Signup Failed. Please try again.");
+    if (!isFormValid) {
+      toast.error("Please fill in all fields before submitting.");
+      return;
     }
-  } finally {
-    setLoading(false);
-  }
-};
+  
+    setLoading(true);
+    try {
+      const ress  = await postRequest("/api/users/create-mechanic", formData);
+      console.log(ress);
+      alert("Signup Successful!");
+    console.log(formData)
+    } catch (error) {
+      toast.error("Signup Failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  
 
   const [Address, setAddress] = useState("");
 
@@ -190,30 +162,32 @@ const handleSubmit = async (e: React.FormEvent) => {
 
 <Form.Group className="mb-3 group">      
   <Form.Control
-    type="email"
+    type="number"
+    name="phone"
+    min="0"
+    value={formData.phone}
+    onChange={handleChange}
+    required
+    placeholder=" "
+    />
+  <span className="highlight"></span>
+  <span className="bar"></span>
+  <Form.Label>Business Phone No.</Form.Label>
+</Form.Group>
+
+<Form.Group className="mb-3 group">      
+  <Form.Control
+    type="text"
     name="businessEmail"
     value={formData.businessEmail}
     onChange={handleChange}
     required
     placeholder=" "
-  />
+    />
   <span className="highlight"></span>
   <span className="bar"></span>
   <Form.Label>Business Email</Form.Label>
-</Form.Group>
-<Form.Group className="mb-3 group">      
-  <Form.Control
-    type="tel"
-    name="phone"
-    value={formData.phone}
-    onChange={handleChange}
-    required
-    placeholder=" "
-  />
-  <span className="highlight"></span>
-  <span className="bar"></span>
-  <Form.Label>Business Phone No.</Form.Label>
-</Form.Group>
+    </Form.Group>
 
 </div>
 
@@ -238,6 +212,7 @@ const handleSubmit = async (e: React.FormEvent) => {
   <Form.Control
     type="number"
     name="locationCount"
+    min="0"
     value={formData.locationCount}
     onChange={handleChange}
     required
@@ -258,6 +233,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     name="hoursOfOperation"
     value={formData.hoursOfOperation}
     onChange={handleChange}
+    min="0"
     required
     placeholder=" "
   />
@@ -271,6 +247,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     type="number"
     name="specialHours"
     value={formData.specialHours}
+    min="0"
     onChange={handleChange}
     required
     placeholder=" "
