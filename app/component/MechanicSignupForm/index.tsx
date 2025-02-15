@@ -68,7 +68,7 @@ const MechanicSignupForm: React.FC = () => {
   
     setLoading(true);
     try {
-      const ress  = await postRequest("/api/users/create-mechanic", formData);
+      const ress  = await postRequest("/users/create-mechanic", formData);
       console.log(ress);
       alert("Signup Successful!");
     console.log(formData)

@@ -88,7 +88,11 @@ export function postRequest<T = any>(
     URL: string,
     payload?: any
 ): Promise<AxiosResponse<T>> {
-    return axiosClient.post<T>(URL, payload);
+    return axiosClient.post<T>(URL, payload, {
+        headers: {
+            "Content-Type": "application/json",  // Ensure JSON format
+        },
+    });
 }
 
 export function adminPostRequest<T = any>(
