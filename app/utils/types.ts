@@ -46,3 +46,15 @@ export interface PaginatedResponse<T> {
 export interface ValidationErrorResponse {
     [field: string]: string[];
 }
+
+export interface MechanicSignupData {   
+        name: string;
+        email: string;
+        phoneNumber: string;
+        businessName: string;
+        businessHours: string;
+        location: string; // Added location field
+        password: string;
+        confirmPassword: string;
+      
+  }
