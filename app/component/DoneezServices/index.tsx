@@ -781,6 +781,20 @@ const ServiceAccordions: React.FC<Props> = ({ onSelectionChange }) => {
     });
   };
 
+  // New function: Toggle select all for a given sub-item's services
+  const handleSelectAll = (services: { id: string; name: string }[]) => {
+    setSelectedServices(prev => {
+      const newSet = new Set(prev);
+      const allSelected = services.every(service => newSet.has(service.id));
+      if (allSelected) {
+        services.forEach(service => newSet.delete(service.id));
+      } else {
+        services.forEach(service => newSet.add(service.id));
+      }
+      return newSet;
+    });
+  };
+
   const handleCheckboxChange = (serviceId: string) => (e: React.MouseEvent) => {
     e.stopPropagation();
     setSelectedServices(prev => {
@@ -808,86 +822,100 @@ const ServiceAccordions: React.FC<Props> = ({ onSelectionChange }) => {
   
 
   return (
-    <div className="service-interview-container">
-      {accordionsData.map((accordion, index) => (
-        <div key={index} className="accordion-box">
-          <div 
-            className="accordion-header"
-            onClick={() => setOpenIndex(openIndex === index ? null : index)}
-          >
-            <div className="title-group">
-              <h3 className="main-title">{accordion.title}</h3>
-            </div>
-            <span className={`accordion-arrow ${openIndex === index ? 'open' : ''}`}></span>
-          </div>
-
-          <div className={`accordion-content ${openIndex === index ? 'visible' : ''}`}>
-            {accordion.subItems.map((subItem, subIndex) => (
-              <div key={subIndex} className="sub-accordion">
-                <div
-                  className="sub-accordion-header"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setOpenSubIndex(openSubIndex === subIndex ? null : subIndex);
-                  }}
-                >
-                  <div className="sub-box-icon">
-                    <svg
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M5 13l4 4L19 7"></path>
-                    </svg>
-                  </div>
-                  <div className="sub-content">
-                    <h4 className="sub-title">{subItem.title}</h4>
-                  </div>
-                  <span className={`sub-accordion-arrow ${openSubIndex === subIndex ? 'open' : ''}`}></span>
-                </div>
-
-                <div className={`sub-accordion-content ${openSubIndex === subIndex ? 'visible' : ''}`}>
-                {subItem.services.map((service) => (
-        <div 
-          key={service.id}
-          className="service-checkbox-container"
-          onClick={handleCheckboxChange(service.id)}
-        >
-          <div className={`custom-checkbox ${selectedServices.has(service.id) ? 'checked' : ''}`}>
-            {selectedServices.has(service.id) && (
-              <svg className="check-icon" viewBox="0 0 24 24">
-                <path d="M20 6L9 17l-5-5" stroke="white" strokeWidth="2" fill="none"/>
-              </svg>
-            )}
-          </div>
-          <span className="service-name">{service.name}</span>
-        </div>
-      ))}
-
-                </div>
+    <>
+      <h3 style={{ margin: '26px', fontSize: '1.6rem', color: 'black', fontWeight: '500', textAlign: 'center' }}>
+        Select the Auto Services you offer
+      </h3>
+      <div className="service-interview-container">
+        {accordionsData.map((accordion, index) => (
+          <div key={index} className="accordion-box">
+            <div 
+              className="accordion-header"
+              onClick={() => setOpenIndex(openIndex === index ? null : index)}
+            >
+              <div className="title-group">
+                <h3 className="main-title">{accordion.title}</h3>
               </div>
-            ))}
-          </div>
-        </div>
-      ))}
+              <span className={`accordion-arrow ${openIndex === index ? 'open' : ''}`}></span>
+            </div>
 
-      <div className="selected-services-panel">
-        <h3 style={{margin:'26px',fontSize:'1.6rem',color:'black',fontWeight:'500',textAlign:'center'}}>Selected Services ({selectedServices.size}):</h3>
-        <ul style={{lineHeight:'4rem',margin:'28px',listStyleType:'auto',display:'flex',justifyContent:'space-around',flexWrap:'wrap'}}>
-          {Array.from(selectedServices).map((serviceId) => {
-            const service = accordionsData
-              .flatMap(a => a.subItems)
-              .flatMap(s => s.services)
-              .find(s => s.id === serviceId);
-            
-            return <li key={serviceId}>{service?.name}</li>;
-          })}
-        </ul>
+            <div className={`accordion-content ${openIndex === index ? 'visible' : ''}`}>
+              {accordion.subItems.map((subItem, subIndex) => (
+                <div key={subIndex} className="sub-accordion">
+                  <div
+                    className="sub-accordion-header"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setOpenSubIndex(openSubIndex === subIndex ? null : subIndex);
+                    }}
+                  >
+                    <div className="sub-box-icon">
+                      <svg className="plus-icon" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                      </svg>
+                    </div>
+                    <div className="sub-content">
+                      <h4 className="sub-title">{subItem.title}</h4>
+                    </div>
+                    <span className={`sub-accordion-arrow ${openSubIndex === subIndex ? 'open' : ''}`}></span>
+                  </div>
+
+                  <div className={`sub-accordion-content ${openSubIndex === subIndex ? 'visible' : ''}`}>
+                    {/* Select All option for the sub-item */}
+                    <div 
+                      className="service-checkbox-container select-all" 
+                      onClick={(e) => { 
+                        e.stopPropagation(); 
+                        handleSelectAll(subItem.services); 
+                      }}
+                    >
+                      <div className={`custom-checkbox ${subItem.services.every(service => selectedServices.has(service.id)) ? 'checked' : ''}`}>
+                        {subItem.services.every(service => selectedServices.has(service.id)) && (
+                          <svg className="check-icon" viewBox="0 0 24 24">
+                            <path d="M20 6L9 17l-5-5" stroke="white" strokeWidth="2" fill="none"/>
+                          </svg>
+                        )}
+                      </div>
+                      <span className="service-name">Select All</span>
+                    </div>
+                    {subItem.services.map((service) => (
+                      <div 
+                        key={service.id}
+                        className="service-checkbox-container"
+                        onClick={handleCheckboxChange(service.id)}
+                      >
+                        <div className={`custom-checkbox ${selectedServices.has(service.id) ? 'checked' : ''}`}>
+                          {selectedServices.has(service.id) && (
+                            <svg className="check-icon" viewBox="0 0 24 24">
+                              <path d="M20 6L9 17l-5-5" stroke="white" strokeWidth="2" fill="none"/>
+                            </svg>
+                          )}
+                        </div>
+                        <span className="service-name">{service.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+
+<div className="selected-services-panel">
+          <h3>Selected Services ({selectedServices.size}):</h3>
+          <ul>
+            {Array.from(selectedServices).map((serviceId) => {
+              const service = accordionsData
+                .flatMap(a => a.subItems)
+                .flatMap(s => s.services)
+                .find(s => s.id === serviceId);
+              return <li key={serviceId}>{service?.name}</li>;
+            })}
+          </ul>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

@@ -120,7 +120,7 @@ const UserLocationMap: React.FC<UserLocationMapProps> = ({ addressInput, address
       <Button
         className="action-button bg-green-200 text-white px-4 py-2 rounded"
         onClick={handleUpdateAddress} // Call function that updates latestAddress first
-        style={{ background: "#0582fd", display: "flex", alignItems: "center", gap: "10px" }}
+        style={{ background: "#5786F0", display: "flex", alignItems: "center", gap: "10px" }}
         disabled={loading} // Disable button when loading
       >
         {loading && <Spinner animation="border" size="sm" />} {/* Show spinner when loading */}
