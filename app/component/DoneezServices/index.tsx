@@ -14,13 +14,20 @@ interface AccordionData {
 }
 
 interface Props {
-    onSelectionChange: (selectedServices: string[]) => void;
-  }
+  onSelectionChange: (selectedServices: string[]) => void;
+  initialSelectedServices: string[];
+}
 
-const ServiceAccordions: React.FC<Props> = ({ onSelectionChange }) => {
+const ServiceAccordions: React.FC<Props> = ({ 
+  onSelectionChange, 
+  initialSelectedServices 
+}) => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [openSubIndex, setOpenSubIndex] = useState<number | null>(null);
-  const [selectedServices, setSelectedServices] = useState<Set<string>>(new Set());
+  const [selectedServices, setSelectedServices] = useState<Set<string>>(
+    new Set(initialSelectedServices)
+  );
+
 
   const accordionsData: AccordionData[] = [
     {
@@ -769,17 +776,15 @@ const ServiceAccordions: React.FC<Props> = ({ onSelectionChange }) => {
       }
     ];
 
+   // Modified service ID handling
   const toggleService = (serviceId: string) => {
     setSelectedServices(prev => {
       const newSet = new Set(prev);
-      if (newSet.has(serviceId)) {
-        newSet.delete(serviceId);
-      } else {
-        newSet.add(serviceId);
-      }
+      newSet.has(serviceId) ? newSet.delete(serviceId) : newSet.add(serviceId);
       return newSet;
     });
   };
+
 
   // New function: Toggle select all for a given sub-item's services
   const handleSelectAll = (services: { id: string; name: string }[]) => {
@@ -805,18 +810,10 @@ const ServiceAccordions: React.FC<Props> = ({ onSelectionChange }) => {
 
   };
 
-  useEffect(() => {
-    const services = Array.from(selectedServices).map((serviceId) => {
-      const service = accordionsData
-        .flatMap(a => a.subItems)
-        .flatMap(s => s.services)
-        .find(s => s.id === serviceId);
-  
-      return service?.name;  // Ensure we're returning a name
-    }).filter(Boolean);  // Remove undefined values
-  
-    onSelectionChange(services as string[]);  // Cast to string[] to satisfy TypeScript
-  }, [selectedServices, onSelectionChange, accordionsData]); // Ensure dependencies are correctly included
+   // Return service IDs instead of names
+   useEffect(() => {
+    onSelectionChange(Array.from(selectedServices));
+  }, [selectedServices, onSelectionChange]);
   
 
   

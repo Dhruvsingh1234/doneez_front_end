@@ -16,101 +16,114 @@ const UserLocationMap: React.FC<UserLocationMapProps> = ({ addressInput, address
   const [isVerified, setIsVerified] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [latestAddress, setLatestAddress] = useState<string>("");
+  const [prevAddress, setPrevAddress] = useState("");
 
-  const googleMapsApiKey = "AIzaSyBq-_LwbssQJbaN_JNmLp7ZjKB-0Kd4gSQ"; // Securely store your API key
 
-  useEffect(() => {
-    if ((window as any).google) {
-      initializeMap();
-      return;
-    }
+  const googleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
-    const script = document.createElement("script");
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${googleMapsApiKey}`;
-    script.async = true;
-    script.defer = true;
-    script.onload = initializeMap;
-    document.body.appendChild(script);
+ // Initialize map and geocoder
+ useEffect(() => {
+  if ((window as any).google) {
+    initializeMap();
+    return;
+  }
 
-    return () => {
-      script.remove();
-    };
-  }, []);
+  const script = document.createElement("script");
+  script.src = `https://maps.googleapis.com/maps/api/js?key=${googleMapsApiKey}`;
+  script.async = true;
+  script.defer = true;
+  script.onload = initializeMap;
+  document.body.appendChild(script);
 
-  const initializeMap = () => {
-    if (mapRef.current && (window as any).google?.maps) {
-      const map = new google.maps.Map(mapRef.current, {
-        center: { lat: 37.0902, lng: -95.7129 }, // Default to USA
-        zoom: 4,
-      });
-      setMapInstance(map);
+  return () => {
+    script.remove();
+    if (mapInstance) {
+      mapInstance.unbindAll();
     }
   };
+}, []);
 
-  const markersetter = async (address: string) => {
-    if (!mapInstance || !address) return;
+// Handle address verification and marker updates
+useEffect(() => {
+  if (!mapInstance || !addressInput?.fullAddress) return;
+  
+  const currentAddress = addressInput.fullAddress.trim();
+  if (currentAddress === prevAddress) return;
 
-    setLoading(true); // Start loading
-
-    const geocoder = new google.maps.Geocoder();
-
+  const handler = setTimeout(async () => {
     try {
-      const response = await geocoder.geocode({ address });
+      setLoading(true);
+      const geocoder = new google.maps.Geocoder();
+      const response = await geocoder.geocode({ address: currentAddress });
 
       if (response.results.length > 0) {
         const result = response.results[0];
         const location = result.geometry.location;
 
+        // Update map view
         mapInstance.setCenter(location);
-        mapInstance.setZoom(13);
+        mapInstance.setZoom(15);
 
-        // Remove existing marker if present
+        // Clear existing marker
         if (marker) {
           marker.setMap(null);
         }
 
-        // Create a new marker
+        // Create new marker
         const newMarker = new google.maps.Marker({
           position: location,
           map: mapInstance,
           title: result.formatted_address,
-          animation: google.maps.Animation.DROP, // Smooth drop animation
+          animation: google.maps.Animation.DROP,
         });
 
-        setMarker(newMarker);
-
-        // Info window with address
+        // Add info window
         const infoWindow = new google.maps.InfoWindow({
           content: `<strong>${result.formatted_address}</strong>`,
         });
 
-        newMarker.addListener("click", () => infoWindow.open(mapInstance, newMarker));
-        infoWindow.open(mapInstance, newMarker);
+        newMarker.addListener("click", () => {
+          infoWindow.open(mapInstance, newMarker);
+        });
 
+        setMarker(newMarker);
+        infoWindow.open(mapInstance, newMarker);
         setVerifiedAddress(result.formatted_address);
         setIsVerified(true);
+        setPrevAddress(currentAddress);
       } else {
-        setVerifiedAddress("Address not found.");
-        setIsVerified(false);
+        throw new Error("Address not found");
       }
     } catch (error) {
-      console.error("Error verifying address:", error);
-      setVerifiedAddress("Error verifying address.");
+      console.error("Geocoding error:", error);
+      setVerifiedAddress("Invalid address - please check and try again");
       setIsVerified(false);
+    } finally {
+      setLoading(false);
     }
+  }, 500);
 
-    setLoading(false); // Stop loading
-  };
+  return () => clearTimeout(handler);
+}, [addressInput?.fullAddress, mapInstance]);
 
-  useEffect(() => {
-    if (addressInput?.fullAddress) {
-      markersetter(addressInput.fullAddress);
-    }
-  }, [addressInput?.fullAddress]);
+const initializeMap = () => {
+  if (mapRef.current && (window as any).google?.maps) {
+    const map = new google.maps.Map(mapRef.current, {
+      center: { lat: 37.0902, lng: -95.7129 },
+      zoom: 4,
+      disableDefaultUI: true,
+      zoomControl: true,
+    });
+    setMapInstance(map);
+  }
+};
 
-  const handleUpdateAddress = async () => {
-    addressfnc(); // This updates formData.fullAddress
-  };
+const handleUpdateAddress = () => {
+  if (!loading) {
+    addressfnc();
+  }
+};
+
 
   return (
     <>

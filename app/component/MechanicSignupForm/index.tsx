@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import { Button, Form, Spinner } from "react-bootstrap";
 import "tailwindcss/tailwind.css";
 import { postRequest } from "../../utils/axios";
@@ -9,6 +9,7 @@ import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
 import MapWithMarker from "../MapWithMarker";
 import ServiceInterView from "../DoneezServices";
+
 
 interface DayHours {
   day: string;
@@ -46,7 +47,6 @@ const MechanicSignupForm: React.FC = () => {
     setDays(updatedDays);
   };
 
-   
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -66,7 +66,15 @@ const MechanicSignupForm: React.FC = () => {
     services: [] as string[],
   });
 
- 
+  const [Address, setAddress] = useState("");
+
+  // Sync address input when returning to step 3
+  useEffect(() => {
+    if (currentStep === 2) {
+      setAddress(formData.fullAddress);
+    }
+  }, [currentStep, formData.fullAddress]);
+
   const validateField = (name: string, value: string): string | null => {
     switch (name) {
       case "businessName":
@@ -129,13 +137,10 @@ const MechanicSignupForm: React.FC = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // onBlur handler to validate fields on leaving input
   const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     const error = validateField(name, value);
-    if (error) {
-      toast.error(error);
-    }
+    if (error) toast.error(error);
   };
 
   const handleServiceSelection = (selectedServices: string[]) => {
@@ -146,6 +151,39 @@ const MechanicSignupForm: React.FC = () => {
   };
 
   const handleNext = () => {
+    // Validate current step before proceeding
+    let errors: string[] = [];
+    switch (currentStep) {
+      case 0:
+        const step1Fields = [
+          { name: "businessName", value: formData.businessName },
+          { name: "businessTagline", value: formData.businessTagline },
+          { name: "phone", value: formData.phone },
+          { name: "businessEmail", value: formData.businessEmail },
+          { name: "website", value: formData.website },
+          { name: "locationCount", value: formData.locationCount },
+          { name: "specialHours", value: formData.specialHours },
+          { name: "businessDescription", value: formData.businessDescription },
+        ];
+        step1Fields.forEach(({ name, value }) => {
+          const error = validateField(name, value.toString());
+          if (error) errors.push(error);
+        });
+        break;
+      case 1:
+        if (formData.services.length === 0) {
+          errors.push("Please select at least one service.");
+        }
+        break;
+      case 2:
+        submitAddress()
+        break;
+    }
+
+    if (errors.length > 0) {
+      errors.forEach((err) => toast.error(err));
+      return;
+    }
     setCurrentStep((prev) => prev + 1);
   };
 
@@ -155,25 +193,50 @@ const MechanicSignupForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Merge the weekly hours (days) into the formData
+    
     const updatedFormData = { ...formData, hoursOfOperation: days };
+    const errors: string[] = [];
 
-    // Validate that every field is filled
-    const isFormValid = Object.entries(updatedFormData).every(([key, value]) => {
-      if (Array.isArray(value)) return value.length > 0;
-      return value.toString().trim() !== "";
+    console.log(updatedFormData)
+
+    // Validate all fields
+    const fieldsToValidate = [
+      { name: "businessName", value: updatedFormData.businessName },
+      { name: "businessTagline", value: updatedFormData.businessTagline },
+      { name: "phone", value: updatedFormData.phone },
+      { name: "businessEmail", value: updatedFormData.businessEmail },
+      { name: "website", value: updatedFormData.website },
+      { name: "locationCount", value: updatedFormData.locationCount },
+      { name: "specialHours", value: updatedFormData.specialHours },
+      { name: "businessDescription", value: updatedFormData.businessDescription },
+      { name: "fullAddress", value: updatedFormData.fullAddress },
+      { name: "city", value: updatedFormData.city },
+      { name: "state", value: updatedFormData.state },
+      { name: "zipcode", value: updatedFormData.zipcode },
+    ];
+
+    fieldsToValidate.forEach(({ name, value }) => {
+      const error = validateField(name, value.toString());
+      if (error) errors.push(error);
     });
 
-    if (!isFormValid) {
-      toast.error("Please fill in all fields before submitting.");
+    if (updatedFormData.services.length === 0) {
+      errors.push("Please select at least one service.");
+    }
+
+    const hasValidHours = days.some((day) => !day.isClosed);
+    if (!hasValidHours) {
+      errors.push("At least one day must have operating hours.");
+    }
+
+    if (errors.length > 0) {
+      errors.forEach((err) => toast.error(err));
       return;
     }
 
     setLoading(true);
     try {
       const response = await postRequest("/users/create-mechanic", updatedFormData);
-      console.log(response);
       toast.success("Signup Successful!");
       console.log(updatedFormData);
     } catch (error) {
@@ -183,8 +246,6 @@ const MechanicSignupForm: React.FC = () => {
     }
   };
 
-  // For address updating from the Map component
-  const [Address, setAddress] = useState("");
   const submitAddress = () => {
     setFormData((prev) => ({ ...prev, fullAddress: Address }));
   };
@@ -192,7 +253,7 @@ const MechanicSignupForm: React.FC = () => {
   const finaladdress = {
     fullAddress: formData.fullAddress,
   };
-
+  
   return (
     <>
       <Toaster position="top-center" reverseOrder={false} />
@@ -491,7 +552,7 @@ const MechanicSignupForm: React.FC = () => {
             {currentStep === 1 && (
               <fieldset>
                 <div className="mb-6">
-                  <ServiceInterView onSelectionChange={handleServiceSelection} />
+                  <ServiceInterView initialSelectedServices={formData.services}  onSelectionChange={handleServiceSelection} />
                 </div>
                 <div className="flex justify-between mt-4">
                   <Button
