@@ -9,6 +9,7 @@ import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
 import MapWithMarker from "../MapWithMarker";
 import ServiceInterView from "../DoneezServices";
+import SuccessAnimation from "./SuccessAnimation";
 
 
 interface DayHours {
@@ -49,6 +50,7 @@ const MechanicSignupForm: React.FC = () => {
 
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [isUnSubmitted, setIsUnSubmitted] = useState(true);
   const [formData, setFormData] = useState({
     businessName: "",
     businessTagline: "",
@@ -238,7 +240,7 @@ const MechanicSignupForm: React.FC = () => {
     try {
       const response = await postRequest("/users/create-mechanic", updatedFormData);
       toast.success("Signup Successful!");
-      console.log(updatedFormData);
+      setIsUnSubmitted(false); 
     } catch (error) {
       toast.error("Signup Failed. Please try again.");
     } finally {
@@ -275,6 +277,8 @@ const MechanicSignupForm: React.FC = () => {
           </div>
         </nav>
       </header>
+
+      {isUnSubmitted ? (
 
       <div className="flex justify-center bg-gray-100 py-8 responsive-form">
         <div className="bg-white p-8 rounded-lg shadow-lg w-full form-container">
@@ -504,7 +508,6 @@ const MechanicSignupForm: React.FC = () => {
                     </Form.Text>
                   </Form.Group>
                 </div>
-
                 <div className="grid grid-cols-1">
                   <Form.Group className="relative mb-6">
                     <Form.Control
@@ -678,7 +681,7 @@ const MechanicSignupForm: React.FC = () => {
             )}
           </Form>
         </div>
-      </div>
+      </div> ) :(<SuccessAnimation/>) }
     </>
   );
 };
