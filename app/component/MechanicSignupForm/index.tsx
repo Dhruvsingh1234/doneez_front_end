@@ -149,7 +149,6 @@ const MechanicSignupForm: React.FC = () => {
             services: selectedServices,
         }));
 
-        console.log(formData.services);
     };
 
     const handleNext = () => {
@@ -206,7 +205,6 @@ const MechanicSignupForm: React.FC = () => {
         const updatedFormData = { ...formData, hoursOfOperation: days };
         const errors: string[] = [];
 
-        console.log(updatedFormData);
 
         // Validate all fields
         const fieldsToValidate = [
