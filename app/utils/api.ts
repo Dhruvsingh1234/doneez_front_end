@@ -65,3 +65,22 @@ export async function fetchMechanicProfileAll(
         }
     }
 }
+
+export async function fetchBusinessProfilesAll(
+    params: FetchMechanicsParams
+): Promise<PaginatedMechanicProfileResponse> {
+    try {
+        const URL = '/users/business-profile-all/';
+        const response = await adminGetRequest<PaginatedMechanicProfileResponse>(URL, {
+            ...params
+        });
+        return response.data;
+    } catch(error: any) {
+        if (error.response && error.response.status === 400) {
+            const validationErrors: ValidationErrorResponse = error.response.data;
+            throw new Error(JSON.stringify(validationErrors));
+        } else {
+            throw new Error('An unexpected error occurred.');
+        }
+    }
+}

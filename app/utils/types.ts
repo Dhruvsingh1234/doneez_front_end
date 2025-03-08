@@ -30,6 +30,8 @@ export interface MechanicProfileType {
     address_longitude: string;
     distance?: number;
     offered_services: string[] | null;
+    website?: string;
+    business_description?: string;
 }
 
 export interface PaginatedMechanicProfileResponse extends PaginatedResponse<MechanicProfileType> {}
@@ -57,4 +59,30 @@ export interface MechanicSignupData {
         password: string;
         confirmPassword: string;
       
+  }
+
+ export interface AccordionData {
+    title: string;
+    subItems: {
+      title: string;
+      services: {
+        id: string;
+        name: string;
+      }[];
+    }[];
+  }
+  
+
+  export interface UserLocationMapProps {
+    addressInput?: {
+      fullAddress?: string;
+    };
+    addressfnc: () => void; 
+  }
+
+ export interface DayHours {
+    day: string;
+    startTime: string;
+    endTime: string;
+    isClosed: boolean;
   }
