@@ -246,6 +246,7 @@ const MechanicSignupForm: React.FC = () => {
 
         setLoading(true);
         try {
+          console.log(updatedFormData);
             const response = await postRequest(
                 '/users/create-mechanic',
                 updatedFormData
@@ -253,6 +254,8 @@ const MechanicSignupForm: React.FC = () => {
             toast.success('Signup Successful!');
             setIsUnSubmitted(false);
         } catch (error) {
+          alert(error);
+            console.log(error);
             toast.error('Signup Failed. Please try again.');
         } finally {
             setLoading(false);

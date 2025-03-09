@@ -10,7 +10,7 @@ const SuccessAnimation: React.FC = () => {
           <path className="tick-check" fill="none" d="M14 27l7 7 16-16" />
         </svg>
       </div>
-      <div className="success-message">Your information has been recorded</div>
+      <div className="success-message">Thank you! , Your data has been recorded succesfully</div>
       <style jsx>{`
         .success-container {
           display: flex;
