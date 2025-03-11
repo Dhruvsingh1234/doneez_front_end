@@ -193,7 +193,7 @@ export default function HomePage() {
                         Elevate your business with us! Sign up for DoneEZ today!
                     </p>
                     <Link
-                        href="/sign-up"
+                        href="/MechanicSignup"
                         className="bg-white text-[#009ed5] px-8 py-4 rounded-full font-semibold shadow hover:bg-gray-200"
                     >
                         Sign Up as a Service Professional
