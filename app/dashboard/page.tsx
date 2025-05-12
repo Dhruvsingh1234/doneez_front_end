@@ -1,94 +1,153 @@
 'use client';
 
-import { useState } from 'react';
-import DashboardHeader from '../headers/DashBoardHeader/dashboardheader';
-import { Tabs, Tab, Card, CardBody } from '@nextui-org/react';
-import { getStorage } from '../utils/helper';
-import { redirect } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { Tabs, Tab, Spinner, Button } from '@nextui-org/react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useRouter, useSearchParams } from 'next/navigation';
+import {StarIcon} from '@heroicons/react/24/outline';
+import useAuth from '@/app/utils/hooks';
+import { getRequest } from '@/app/utils/axios';
+import RequestOverlay from './RequestDetailsOverlay';
+import ServiceRequestCard from './ServiceRequestCard';
+import CustomHeader from '../headers/CustomHeader';
+const Dashboard = ({ role }: { role: 'customer' | 'mechanic' }) => {
+  const [selectedTab, setSelectedTab] = useState<string>('pending');
+  const [selectedRequest, setSelectedRequest] = useState<{ id: number; status: string } | null>(null);
+  const [data, setData] = useState<Record<string, any[]>>({});
+  const [loading, setLoading] = useState(true);
 
-export default function Dashboard() {
-    const [selected, setSelected] = useState<string>('All Quotes');
+  const [autoOpenRequest, setAutoOpenRequest] = useState<{ id: number; status: string } | null>(null);
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-    const accessToken = getStorage('access_token');
-    if (!accessToken) {
-        console.log(accessToken);
-        redirect('/');
+  useEffect(() => {
+    // Check for Stripe payment success in URL
+    const paymentStatus = searchParams.get('payment');
+    const quoteId = searchParams.get('quote');
+    if (paymentStatus === 'success' && quoteId) {
+      getRequest(`/quotes/${quoteId}/`).then(res => {
+        const serviceRequestId = res.data.service_request;
+        getRequest(`/service-requests/${serviceRequestId}/`).then(srRes => {
+          setAutoOpenRequest({ id: serviceRequestId, status: srRes.data.status });
+        });
+      });
+      router.replace('/dashboard');
     }
+  }, [searchParams, router]);
 
-    return (
-        <div className="min-h-[100vh] bg-[#f4f6fa] min-w-full flex flex-col">
-            <DashboardHeader />
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const endpoint = role === 'customer'
+          ? '/user-dashboard/'
+          : '/mechanic-dashboard/';
+        const response = await getRequest(endpoint);
+        setData(response.data);
+      } catch (error) {
+        setData({
+          pending: [],
+          quoted: [],
+          accepted: [],
+          completed: [],
+          ...(role === 'customer' ? { canceled: [] } : { rejected: [] }),
+        });
+      }
+      setLoading(false);
+    };
+    fetchData();
+  }, [role]);
 
-            <div className="mt-6 flex flex-col items-center w-full">
-                <div className="max-w-[1280px] w-full p-4 sm:p-6 md:p-8 lg:p-10 bg-white rounded-md shadow-[0_2px_2px_0_rgba(224,226,230,.5)]">
-                    <Tabs
-                        aria-label={'Options'}
-                        selectedKey={selected}
-                        onSelectionChange={(key) => setSelected(key as string)}
-                        variant="underlined"
-                        classNames={{
-                            tabList:
-                                'max-md:flex-wrap gap-0 w-full rounded-none',
-                            tab: 'max-md:w-auto',
-                            cursor: 'bg-red-700',
-                        }}
-                    >
-                        <Tab key={'All Quotes'} title="All Quotes">
-                            <Card>
-                                <CardBody>
-                                    Lorem ipsum dolor sit amet, consectetur
-                                    adipiscing elit, sed do eiusmod tempor
-                                    incididunt ut labore et dolore magna aliqua.
-                                    Ut enim ad minim veniam, quis nostrud
-                                    exercitation ullamco laboris nisi ut aliquip
-                                    ex ea commodo consequat.
-                                </CardBody>
-                            </Card>
-                        </Tab>
-                        <Tab key="Requests" title="Requests">
-                            <Card>
-                                <CardBody>
-                                    Lorem ipsum dolor sit amet, consectetur
-                                    adipiscing elit, sed do eiusmod tempor
-                                    incididunt ut labore et dolore magna aliqua.
-                                    Ut enim ad minim veniam, quis nostrud
-                                    exercitation ullamco laboris nisi ut aliquip
-                                    ex ea commodo consequat.
-                                </CardBody>
-                            </Card>
-                        </Tab>
-                        <Tab key="Booked" title="Booked">
-                            <Card>
-                                <CardBody>
-                                    Ut enim ad minim veniam, quis nostrud
-                                    exercitation ullamco laboris nisi ut aliquip
-                                    ex ea commodo consequat. Duis aute irure
-                                    dolor in reprehenderit in voluptate velit
-                                    esse cillum dolore eu fugiat nulla pariatur.
-                                </CardBody>
-                            </Card>
-                        </Tab>
-                        <Tab key="Canceled Requests" title="Canceled Requests">
-                            <Card>
-                                <CardBody>
-                                    Excepteur sint occaecat cupidatat non
-                                    proident, sunt in culpa qui officia deserunt
-                                    mollit anim id est laborum.
-                                </CardBody>
-                            </Card>
-                        </Tab>
-                        <Tab key="Closed Requests" title="Closed Requests">
-                            <Card>
-                                <CardBody>
-                                    Excepteur sint occaecat cupidatat non
-                                    proident, sunt in culpa qui officia deserunt
-                                    mollit anim id est laborum.
-                                </CardBody>
-                            </Card>
-                        </Tab>
-                    </Tabs>
-                </div>
+  return (
+
+    <>
+
+     <CustomHeader />
+    
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-blue-50">
+      {searchParams.get('payment') === 'success' && (
+  <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-emerald-100 border border-emerald-300 text-emerald-800 px-6 py-3 rounded-xl shadow-lg z-50">
+    Payment successful! Your appointment has been created.
+  </div>
+)}
+      <div className="max-w-6xl mx-auto px-4 py-10">
+        {/* <div className="flex items-center justify-between mb-8">
+          <h1 className="text-3xl font-extrabold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent tracking-tight">
+            {role === 'customer' ? 'My Service Requests' : 'Service Requests'}
+          </h1>
+        </div> */}
+        <Tabs
+          selectedKey={selectedTab}
+          onSelectionChange={(key) => setSelectedTab(String(key))}
+          variant="underlined"
+          classNames={{
+            tabList: 'flex flex-col md:flex-row gap-4',
+            cursor: 'bg-emerald-500',
+            tab: 'text-lg font-semibold',
+          }}
+        >
+          {Object.keys(data).map((tab) => (
+            <Tab key={tab} title={<span className="capitalize">{tab}</span>} />
+          ))}
+        </Tabs>
+
+        <div className="mt-8 space-y-6">
+          {loading ? (
+            <div className="flex justify-center py-12">
+              <Spinner size="lg" color="success" />
             </div>
+          ) : data[selectedTab]?.length > 0 ? (
+            <AnimatePresence mode="wait">
+              {data[selectedTab].map((request) => (
+                <ServiceRequestCard
+                  key={request.id}
+                  request={request}
+                  role={role}
+                  onClick={() => setSelectedRequest({ id: request.id, status: request.status })}
+                />
+              ))}
+            </AnimatePresence>
+          ) : (
+            <div className="text-center py-12 text-gray-400 text-lg font-medium">
+              <StarIcon className="w-8 h-8 mx-auto mb-2 text-emerald-200" />
+              No {selectedTab} requests
+            </div>
+          )}
         </div>
+      </div>
+
+      <AnimatePresence>
+    {(selectedRequest || autoOpenRequest) && (
+      <RequestOverlay
+        requestId={(selectedRequest || autoOpenRequest)!.id}
+        role={role}
+        status={(selectedRequest || autoOpenRequest)!.status}
+        onClose={() => {
+          setSelectedRequest(null);
+          setAutoOpenRequest(null);
+        }}
+      />
+    )}
+  </AnimatePresence>
+    </div>
+  </>
+  );
+};
+
+
+export default function DashboardWrapper() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-emerald-50 to-blue-50">
+        <Spinner size="lg" color="success" />
+      </div>
     );
+  }
+  if (!user) return null;
+
+  return (
+    <Dashboard role={user.is_mechanic ? 'mechanic' : 'customer'} />
+  );
 }

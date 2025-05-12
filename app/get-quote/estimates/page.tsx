@@ -24,11 +24,11 @@ export default function Estimates() {
     useEffect(() => {
         setMounted(true); // Indicate that the component has mounted
 
-        const accessToken = getStorage('access_token');
-        if (accessToken == null) {
-            redirect('/get-quote/sign-in');
-            return;
-        }
+        // const accessToken = getStorage('access_token');
+        // if (accessToken == null) {
+        //     redirect('/get-quote/sign-in');
+        //     return;
+        // }
         // This runs only on the client side after the component mounts
         const storedService = getStorage('service-services');
         setService(storedService);

@@ -18,6 +18,14 @@ export const getStorage = (key: string): string | null => {
     // Code is running on the server, localStorage is not available
     return null;
 };
+export const removeStorage = (key: string): string | null => {
+    if (typeof window !== 'undefined') {
+        // Code is running in the browser, safe to use localStorage
+         localStorage.removeItem(key);
+    }
+    // Code is running on the server, localStorage is not available
+    return null;
+};
 
 export const isTokenExpired = (token: string | null | undefined):boolean => {
     if (!token) return true;

@@ -2,180 +2,158 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
+
 interface ServiceProps {
     progressNumber: number;
     progressTitle: string;
-    ServiceStatus ?: (status: boolean) => void;
+    ServiceStatus?: (status: boolean) => void;
 }
-export default function ServiceHeader({
-    progressNumber,
-    progressTitle,
-    ServiceStatus,
-}: ServiceProps) {
-    const [serviceStatus, setServiceStatus] = useState(false);
-    const handleStatus = () => {
-        ServiceStatus?.(!serviceStatus);
-        setServiceStatus(!serviceStatus);
+
+const progressSteps = [
+    { number: 1, label: 'Services' },
+    { number: 2, label: 'Vehicle' },
+    { number: 3, label: 'Note' },
+    { number: 4, label: 'Type' },
+    { number: 5, label: 'Location' },
+    { number: 6, label: 'Book' },
+    { number: 7, label: 'Confirm' },
+];
+
+export default function ServiceHeader({ progressNumber, progressTitle, ServiceStatus }: ServiceProps) {
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const activeColor = '#10B981'; // Emerald green
+    const inactiveColor = '#e1e4f1';
+
+    const handleMenuToggle = () => {
+        setIsMenuOpen(!isMenuOpen);
+        ServiceStatus?.(!isMenuOpen);
     };
+
     return (
-        <div className="flex min-h-[80px] max-md:min-h-[145px] p-[12px] lg:px-6 shadow-[0_.125rem_.25rem_rgba(0,0,0,0.075)] bg-white sticky top-0 z-[10]">
-            <div className="flex flex-row items-center w-full max-md:relative">
-                <div className="text-[30px] max-md:text-[24px] text-black max-md:absolute max-md:left-[50%] max-md:top-[40px] max-md:translate-x-[-50%] max-md:translate-y-[-50%]">
-                    <Link href={'/'}>DoneEZ</Link>
-                </div>
-                <div className="flex flex-row max-w-[530px] w-full mx-auto items-center left-auto max-md:mt-[80px] max-md:max-w-[70%] max-[500px]:max-w-[50%] max-md:mx-auto">
-                    <div className="md:hidden absolute left-0 top-[95px] text-[#e83c79] text-[16px] font-bold">
-                        {progressTitle}
+        <motion.header 
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            className="bg-white shadow-sm sticky top-0 z-20 border-b border-gray-100"
+        >
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex items-center justify-between h-20 relative">
+                    {/* Logo */}
+                    <Link href="/" className="text-3xl font-bold text-gray-900 hover:text-[#10B981] transition-colors">
+                        DoneEZ
+                    </Link>
+
+                    {/* Desktop Progress Bar */}
+                    <div className="hidden md:flex absolute left-1/2 -translate-x-1/2">
+                        <div className="flex items-center space-x-4">
+                            {progressSteps.map((step, index) => {
+                                const isActive = progressNumber >= step.number;
+                                const isBetween = progressNumber > step.number;
+                                
+                                return (
+                                    <div key={step.number} className="flex items-center">
+                                        {/* Progress Line */}
+                                        {index > 0 && (
+                                            <div 
+                                                className={`h-1 w-16 ${isBetween ? 'bg-[#10B981]' : 'bg-[#e1e4f1]'} transition-colors`}
+                                            />
+                                        )}
+                                        
+                                        {/* Progress Dot */}
+                                        <div className="relative flex flex-col items-center">
+                                            <div 
+                                                className={`w-6 h-6 rounded-full border-4 border-white ${isActive ? 'bg-[#10B981]' : 'bg-[#e1e4f1]'} 
+                                                    transition-colors shadow-sm`}
+                                            />
+                                            <span className={`mt-2 text-sm ${isActive ? 'text-[#10B981]' : 'text-gray-400'} font-medium transition-colors`}>
+                                                {step.label}
+                                            </span>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
                     </div>
 
-                    <div className="w-full px-[16px] pt-[4px] pb-[20px] relative text-center">
-                        <div className="text-[#e83c79] max-md:hidden">
-                            Services
-                        </div>
-                        <div className="bg-[#e83c79] border-4 border-white rounded-full bottom-[-3px] h-[18px] left-1/2 ml-[-9px] absolute w-[18px] z-[1]"></div>
-                    </div>
-                    <div className="w-full px-[16px] pt-[4px] pb-[20px] relative text-center">
-                        <div
-                            className={`${
-                                progressNumber >= 2
-                                    ? 'text-[#e83c79]'
-                                    : 'text-[#e1e4f1]'
-                            } max-md:hidden`}
+                    {/* Mobile Header */}
+                    <div className="md:hidden flex items-center gap-4 w-full">
+                        {/* Progress Title */}
+                        <motion.div
+                            key="progress-title"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="text-lg font-semibold text-[#10B981] flex-1 text-center"
                         >
-                            Vehicle
-                        </div>
-                        <div
-                            className={`${
-                                progressNumber >= 2
-                                    ? 'bg-[#e83c79]'
-                                    : 'bg-[#e1e4f1]'
-                            } border-4 border-white rounded-full bottom-[-3px] h-[18px] left-1/2 ml-[-9px] absolute w-[18px] z-[1]`}
-                        ></div>
-                        <div
-                            className={`${
-                                progressNumber >= 2
-                                    ? 'bg-[#e83c79]'
-                                    : 'bg-[#e1e4f1]'
-                            } bottom-[4px] h-[3px] absolute right-1/2 w-full`}
-                        ></div>
-                    </div>
-                    <div className="w-full px-[16px] pt-[4px] pb-[20px] relative text-center">
-                        <div
-                            className={`${
-                                progressNumber >= 3
-                                    ? 'text-[#e83c79]'
-                                    : 'text-[#e1e4f1]'
-                            } max-md:hidden`}
-                        >
-                            Estimates
-                        </div>
-                        <div
-                            className={`${
-                                progressNumber >= 3
-                                    ? 'bg-[#e83c79]'
-                                    : 'bg-[#e1e4f1]'
-                            } border-4 border-white rounded-full bottom-[-3px] h-[18px] left-1/2 ml-[-9px] absolute w-[18px] z-[1]`}
-                        ></div>
-                        <div
-                            className={`${
-                                progressNumber >= 3
-                                    ? 'bg-[#e83c79]'
-                                    : 'bg-[#e1e4f1]'
-                            } bottom-[4px] h-[3px] absolute right-1/2 w-full`}
-                        ></div>
-                    </div>
-                    <div className="w-full px-[16px] pt-[4px] pb-[20px] relative text-center">
-                        <div
-                            className={`${
-                                progressNumber >= 4
-                                    ? 'text-[#e83c79]'
-                                    : 'text-[#e1e4f1]'
-                            } max-md:hidden`}
-                        >
-                            Book
-                        </div>
-                        <div
-                            className={`${
-                                progressNumber >= 4
-                                    ? 'bg-[#e83c79]'
-                                    : 'bg-[#e1e4f1]'
-                            } border-4 border-white rounded-full bottom-[-3px] h-[18px] left-1/2 ml-[-9px] absolute w-[18px] z-[1]`}
-                        ></div>
-                        <div
-                            className={`${
-                                progressNumber >= 4
-                                    ? 'bg-[#e83c79]'
-                                    : 'bg-[#e1e4f1]'
-                            } bottom-[4px] h-[3px] absolute right-1/2 w-full`}
-                        ></div>
-                    </div>
-                    <div className="w-full px-[16px] pt-[4px] pb-[20px] relative text-center">
-                        <div
-                            className={`${
-                                progressNumber == 5
-                                    ? 'text-[#e83c79]'
-                                    : 'text-[#e1e4f1]'
-                            } max-md:hidden`}
-                        >
-                            Confirm
-                        </div>
-                        <div
-                            className={`${
-                                progressNumber == 5
-                                    ? 'bg-[#e83c79]'
-                                    : 'bg-[#e1e4f1]'
-                            } border-4 border-white rounded-full bottom-[-3px] h-[18px] left-1/2 ml-[-9px] absolute w-[18px] z-[1]`}
-                        ></div>
-                        <div
-                            className={`${
-                                progressNumber == 5
-                                    ? 'bg-[#e83c79]'
-                                    : 'bg-[#e1e4f1]'
-                            } bottom-[4px] h-[3px] absolute right-1/2 w-full`}
-                        ></div>
-                    </div>
+                            {progressTitle}
+                        </motion.div>
 
-                    <div
-                        className="md:hidden right-[22px] top-[97px] absolute cursor-pointer"
-                        onClick={handleStatus}
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            id="Arrow-Down-1--Streamline-Ultimate"
-                            className={`${serviceStatus ? 'rotate-180' : 'rotate-0'} w-[20px] h-[20px] transition-transform duration-300 ease-out`}
+                        {/* Menu Toggle */}
+                        <button
+                            onClick={handleMenuToggle}
+                            className="p-2 text-gray-600 hover:text-[#10B981] transition-colors"
                         >
-                            <path
-                                d="M1.236 6.403992000000001C0.9873360000000001 6.523032000000001 0.8720160000000001 6.806448 0.972816 7.050768C0.999144 7.11456 2.465136 8.596224 6.114816 12.247728C8.922672 15.056976 11.265792000000001 17.387520000000002 11.321760000000001 17.426712000000002C11.377704000000001 17.465904 11.496504 17.526456 11.58576 17.561256C11.72436 17.615351999999998 11.784696 17.624568 12 17.624568C12.215304 17.624568 12.275640000000001 17.615351999999998 12.41424 17.561256C12.503496000000002 17.526456 12.622296 17.465904 12.67824 17.426712000000002C12.734208 17.387520000000002 15.077328 15.056976 17.885184 12.247728C21.534864 8.596224 23.000856000000002 7.11456 23.027184000000002 7.050768C23.169456 6.705984 22.878936 6.324072 22.507848 6.368016C22.443192 6.375672000000001 22.355591999999998 6.405528 22.31316 6.434376C22.270728000000002 6.4632000000000005 19.951728 8.76948 17.159856 11.559408C12.348336 16.367592 12.079368 16.632 12 16.632C11.920632 16.632 11.651664 16.367592 6.840144 11.559408C4.048272 8.76948 1.728432 6.462599999999999 1.6849679999999998 6.433032C1.572984 6.356832 1.362864 6.343248000000001 1.236 6.403992000000001"
-                                stroke="none"
-                                fill="currentColor"
-                                fillRule="evenodd"
-                            />
-                        </svg>
+                            <motion.svg
+                                viewBox="0 0 24 24"
+                                className="w-6 h-6"
+                                animate={{ rotate: isMenuOpen ? 180 : 0 }}
+                            >
+                                <path
+                                    fill="currentColor"
+                                    d="M1.236 6.404C0.987 6.523 0.872 6.806 0.973 7.05c0.027 0.064 1.493 1.546 5.142 5.197 2.808 2.81 5.151 5.14 5.207 5.18 0.056 0.04 0.175 0.1 0.264 0.135 0.139 0.054 0.199 0.063 0.415 0.063s0.276-0.009 0.415-0.063c0.089-0.035 0.208-0.096 0.264-0.135 0.056-0.04 2.4-2.37 5.207-5.18 3.65-3.65 5.116-5.133 5.142-5.197 0.142-0.345-0.149-0.727-0.52-0.771-0.065-0.008-0.153-0.038-0.195-0.066-0.042-0.029-2.36-2.336-5.152-5.126C12.348 4.368 12.079 4.104 12 4.104s-0.348 0.264-5.16 5.072C4.048 12.232 1.728 14.538 1.685 14.567 1.573 14.643 1.363 14.657 1.236 14.596"
+                                />
+                            </motion.svg>
+                        </button>
+
+                        {/* Close Button */}
+                        <button className="p-2 text-gray-600 hover:text-[#10B981] transition-colors">
+                            <svg viewBox="0 0 24 24" className="w-6 h-6">
+                                <path
+                                    fill="currentColor"
+                                    d="M2.124 1.893c-0.053 0.024-0.12 0.07-0.149 0.102-0.123 0.134-0.162 0.369-0.09 0.543 0.027 0.064 1.375 1.428 4.723 4.776l4.685 4.686-4.685 4.686c-3.348 3.347-4.696 4.71-4.723 4.774-0.071 0.174-0.032 0.41 0.091 0.544 0.124 0.135 0.381 0.185 0.563 0.11 0.064-0.026 1.428-1.374 4.776-4.721l4.686-4.685 4.686 4.685c3.347 3.348 4.71 4.696 4.774 4.723 0.174 0.071 0.41 0.032 0.544-0.091 0.135-0.124 0.185-0.381 0.11-0.563-0.026-0.064-1.374-1.428-4.721-4.776l-4.685-4.686 4.685-4.686c3.348-3.347 4.696-4.71 4.723-4.774 0.071-0.174 0.032-0.41-0.091-0.544-0.124-0.135-0.381-0.185-0.563-0.11-0.064 0.026-1.428 1.374-4.776 4.721l-4.686 4.685-4.686-4.685C3.966 3.26 2.603 1.912 2.539 1.885c-0.12-0.049-0.297-0.045-0.415 0.008"
+                                />
+                            </svg>
+                        </button>
                     </div>
                 </div>
 
-                <div className="mr-0">
-                    <button
-                        className="max-md:absolute max-md:right-[12px] max-md:top-[40px] max-md:translate-y-[-50%] w-[40px] h-[40px] rounded-[50%] shadow-[0_2px_3px_0_#dce0e6] flex justify-center items-center
-                        active:border-solid active:border-[2px] active:border-red-300"
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            id="X--Streamline-Feather"
-                            className="w-[15px] h-[15px]"
+                {/* Mobile Progress Steps */}
+                <AnimatePresence>
+                    {isMenuOpen && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="md:hidden overflow-hidden"
                         >
-                            <path
-                                d="M2.124 1.8933600000000002C2.0712 1.91772 2.004216 1.963536 1.975152 1.995168C1.852056 2.129064 1.812936 2.364528 1.8848160000000003 2.538768C1.91112 2.602512 3.259488 3.966096 6.606792 7.314L11.291952 12 6.606792 16.686C3.259488 20.033904 1.91112 21.397488 1.8848160000000003 21.461232C1.812936 21.635472 1.852056 21.870936 1.975152 22.004832C2.0995920000000003 22.140192000000003 2.35632 22.190472 2.538768 22.115184C2.602512 22.08888 3.966096 20.740512 7.314 17.393208L12 12.708048 16.686 17.393208C20.033904 20.740512 21.397488 22.08888 21.461232 22.115184C21.643680000000003 22.190472 21.900408000000002 22.140192000000003 22.024848 22.004832C22.147944000000003 21.870936 22.187064 21.635472 22.115184 21.461232C22.08888 21.397488 20.740512 20.033904 17.393208 16.686L12.708048 12 17.393208 7.314C20.740512 3.966096 22.08888 2.602512 22.115184 2.538768C22.190472 2.35632 22.140192000000003 2.0995920000000003 22.004832 1.975152C21.870936 1.852056 21.635472 1.812936 21.461232 1.8848160000000003C21.397488 1.91112 20.033904 3.259488 16.686 6.606792L12 11.291952 7.314 6.606792C3.966096 3.259488 2.602512 1.91112 2.538768 1.8848160000000003C2.4192240000000003 1.835496 2.2414560000000003 1.8391680000000001 2.124 1.8933600000000002"
-                                stroke="none"
-                                fill="currentColor"
-                                fillRule="evenodd"
-                            />
-                        </svg>
-                    </button>
-                </div>
+                            <div className="py-4 border-t border-gray-100">
+                                <div className="flex flex-col gap-4">
+                                    {progressSteps.map((step) => (
+                                        <div
+                                            key={step.number}
+                                            className={`flex items-center gap-2 ${
+                                                progressNumber >= step.number 
+                                                    ? 'text-[#10B981]' 
+                                                    : 'text-gray-400'
+                                            }`}
+                                        >
+                                            <div 
+                                                className={`w-4 h-4 rounded-full ${
+                                                    progressNumber >= step.number 
+                                                        ? 'bg-[#10B981]' 
+                                                        : 'bg-[#e1e4f1]'
+                                                }`}
+                                            />
+                                            <span className="text-sm font-medium">
+                                                {step.label}
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
-        </div>
+        </motion.header>
     );
 }

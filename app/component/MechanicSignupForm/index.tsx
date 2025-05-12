@@ -11,9 +11,14 @@ import MapWithMarker from '../MapWithMarker';
 import ServiceInterView from '../DoneezServices';
 import SuccessAnimation from './SuccessAnimation';
 import { DayHours } from '@/app/utils/types';
+import CustomHeader from '@/app/headers/CustomHeader';
+import { setStorage } from '@/app/utils/helper';
 
-const MechanicSignupForm: React.FC = () => {
-    // state for handling days when store is open
+interface MechanicSignupFormProps {
+    password?: string;
+    email?: string;
+}
+const MechanicSignupForm: React.FC<MechanicSignupFormProps> = ({ password, email }) => {
     const [days, setDays] = useState<DayHours[]>([
         { day: 'Mon', startTime: '09:00', endTime: '17:00', isClosed: false },
         { day: 'Tue', startTime: '09:00', endTime: '17:00', isClosed: false },
@@ -48,7 +53,6 @@ const MechanicSignupForm: React.FC = () => {
     const [formData, setFormData] = useState({
         businessName: '',
         businessTagline: '',
-        businessEmail: '',
         website: '',
         phone: '',
         locationCount: '',
@@ -64,14 +68,12 @@ const MechanicSignupForm: React.FC = () => {
 
     const [Address, setAddress] = useState('');
 
-    // Sync address input when returning to step 3
     useEffect(() => {
         if (currentStep === 2) {
             setAddress(formData.fullAddress);
         }
     }, [currentStep, formData.fullAddress]);
 
-    //function to validate inputs of form
     const validateField = (name: string, value: string): string | null => {
         switch (name) {
             case 'businessName':
@@ -148,29 +150,20 @@ const MechanicSignupForm: React.FC = () => {
             ...prev,
             services: selectedServices,
         }));
-
     };
 
     const handleNext = () => {
-        // Validate current step before proceeding
         let errors: string[] = [];
         switch (currentStep) {
             case 0:
                 const step1Fields = [
                     { name: 'businessName', value: formData.businessName },
-                    {
-                        name: 'businessTagline',
-                        value: formData.businessTagline,
-                    },
+                    { name: 'businessTagline', value: formData.businessTagline },
                     { name: 'phone', value: formData.phone },
-                    { name: 'businessEmail', value: formData.businessEmail },
                     { name: 'website', value: formData.website },
                     { name: 'locationCount', value: formData.locationCount },
                     { name: 'specialHours', value: formData.specialHours },
-                    {
-                        name: 'businessDescription',
-                        value: formData.businessDescription,
-                    },
+                    { name: 'businessDescription', value: formData.businessDescription },
                 ];
                 step1Fields.forEach(({ name, value }) => {
                     const error = validateField(name, value.toString());
@@ -198,27 +191,20 @@ const MechanicSignupForm: React.FC = () => {
         setCurrentStep((prev) => prev - 1);
     };
 
-    // Function to submit the form and make the APi request to the server to save mechanic's data
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        const updatedFormData = { ...formData, hoursOfOperation: days };
+        const updatedFormData = { ...formData, hoursOfOperation: days, password: password, businessEmail: email };
         const errors: string[] = [];
 
-
-        // Validate all fields
         const fieldsToValidate = [
             { name: 'businessName', value: updatedFormData.businessName },
             { name: 'businessTagline', value: updatedFormData.businessTagline },
             { name: 'phone', value: updatedFormData.phone },
-            { name: 'businessEmail', value: updatedFormData.businessEmail },
             { name: 'website', value: updatedFormData.website },
             { name: 'locationCount', value: updatedFormData.locationCount },
             { name: 'specialHours', value: updatedFormData.specialHours },
-            {
-                name: 'businessDescription',
-                value: updatedFormData.businessDescription,
-            },
+            { name: 'businessDescription', value: updatedFormData.businessDescription },
             { name: 'fullAddress', value: updatedFormData.fullAddress },
             { name: 'city', value: updatedFormData.city },
             { name: 'state', value: updatedFormData.state },
@@ -246,16 +232,20 @@ const MechanicSignupForm: React.FC = () => {
 
         setLoading(true);
         try {
-          console.log(updatedFormData);
             const response = await postRequest(
                 '/users/create-mechanic',
                 updatedFormData
             );
+            setStorage('access_token', response.data.tokens.access);
+            setStorage('refresh_token', response.data.tokens.refresh);
+            setStorage('user', JSON.stringify(response.data.user));
             toast.success('Signup Successful!');
             setIsUnSubmitted(false);
+            setTimeout(() => {
+                window.location.href = '/dashboard';
+            }, 2000);
         } catch (error) {
-          alert(error);
-            console.log(error);
+            alert(error);
             toast.error('Signup Failed. Please try again.');
         } finally {
             setLoading(false);
@@ -270,59 +260,43 @@ const MechanicSignupForm: React.FC = () => {
         fullAddress: formData.fullAddress,
     };
 
+    const steps = ['Details', 'Services', 'Location'];
+
     return (
         <>
             <Toaster position="top-center" reverseOrder={false} />
-            {/* Enhanced Header */}
-            <header className="bg-white shadow-sm sticky top-0 z-50">
-                <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between h-16 items-center">
-                        <Link
-                            href="/"
-                            className="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors"
-                        >
-                            DoneEZ
-                        </Link>
-                        <Link href="/sign-in">
-                            <Button className="inline-flex items-center px-6 py-2 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
-                                Sign In
-                            </Button>
-                        </Link>
-                    </div>
-                </nav>
-            </header>
+            {/* Header stays at the top, not beside the form */}
+            <CustomHeader />
 
-            {isUnSubmitted ? (
-                <div className="flex justify-center bg-gray-100 py-8 responsive-form">
-                    <div className="bg-white p-8 rounded-lg shadow-lg w-full form-container">
+            <main className="min-h-screen bg-gradient-to-br from-emerald-50 to-green-50 flex flex-col items-center py-8">
+                {isUnSubmitted ? (
+                    <div className="w-full max-w-3xl bg-white p-10 rounded-2xl shadow-2xl">
+                        <h2 className="text-2xl font-bold text-center mb-8 text-[#10B981]">Mechanic Signup</h2>
                         <Form onSubmit={handleSubmit}>
                             {/* Progress Steps */}
-                            <div className="px-8 pt-8">
+                            <div className="px-4 pt-4 mb-10">
                                 <div className="relative pb-8">
-                                    <div className="flex justify-between flex-wrap">
-                                        {[
-                                            'Details',
-                                            'Services',
-                                            'Location',
-                                        ].map((step, index) => (
-                                            <div
-                                                key={step}
-                                                className="flex flex-col items-center flex-1 mb-4 sm:mb-0"
-                                            >
+                                    <div className="flex justify-between items-center">
+                                        {steps.map((step, index) => (
+                                            <div key={step} className="flex flex-col items-center flex-1">
                                                 <div
-                                                    className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 ${
-                                                        currentStep >= index
-                                                            ? 'bg-blue-600 text-white'
-                                                            : 'bg-gray-200 text-gray-500'
+                                                    className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 border-4 ${
+                                                        currentStep === index
+                                                            ? 'bg-[#10B981] text-white border-[#10B981] shadow-lg'
+                                                            : currentStep > index
+                                                            ? 'bg-[#059669] text-white border-[#059669]'
+                                                            : 'bg-gray-200 text-gray-500 border-gray-200'
                                                     }`}
                                                     style={{ zIndex: 4 }}
                                                 >
                                                     {index + 1}
                                                 </div>
                                                 <span
-                                                    className={`text-sm font-medium ${
-                                                        currentStep >= index
-                                                            ? 'text-blue-600'
+                                                    className={`text-sm font-semibold ${
+                                                        currentStep === index
+                                                            ? 'text-[#10B981]'
+                                                            : currentStep > index
+                                                            ? 'text-[#059669]'
                                                             : 'text-gray-500'
                                                     }`}
                                                 >
@@ -333,11 +307,9 @@ const MechanicSignupForm: React.FC = () => {
                                     </div>
                                     <div className="absolute top-5 left-0 right-0 h-1 bg-gray-200">
                                         <div
-                                            className="h-full bg-blue-600 transition-all duration-300"
+                                            className="h-full bg-gradient-to-r from-[#10B981] to-[#059669] transition-all duration-300"
                                             style={{
-                                                width: `${
-                                                    (currentStep / 2) * 100
-                                                }%`,
+                                                width: `${(currentStep / (steps.length - 1)) * 100}%`,
                                             }}
                                         ></div>
                                     </div>
@@ -357,39 +329,16 @@ const MechanicSignupForm: React.FC = () => {
                                                 onBlur={handleBlur}
                                                 required
                                                 placeholder=" "
-                                                className="peer border-b-2 border-gray-300 focus:border-blue-500 outline-none"
+                                                className="peer border-b-2 border-gray-300 focus:border-[#10B981] outline-none bg-transparent"
                                             />
                                             <Form.Label className="absolute left-0 top-0 text-gray-500 transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-focus:top-0 peer-focus:text-sm">
                                                 Business Name
                                             </Form.Label>
-                                            <Form.Text className="text-muted">
-                                                Enter the official name of your
-                                                business.
+                                            <Form.Text className="text-gray-400">
+                                                Enter the official name of your business.
                                             </Form.Text>
                                         </Form.Group>
 
-                                        <Form.Group className="relative mb-10">
-                                            <Form.Control
-                                                type="text"
-                                                name="businessTagline"
-                                                value={formData.businessTagline}
-                                                onChange={handleChange}
-                                                onBlur={handleBlur}
-                                                required
-                                                placeholder=" "
-                                                className="peer border-b-2 border-gray-300 focus:border-blue-500 outline-none"
-                                            />
-                                            <Form.Label className="absolute left-0 top-0 text-gray-500 transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-focus:top-0 peer-focus:text-sm">
-                                                Business Tagline
-                                            </Form.Label>
-                                            <Form.Text className="text-muted">
-                                                Enter a short tagline
-                                                representing your business.
-                                            </Form.Text>
-                                        </Form.Group>
-                                    </div>
-
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                                         <Form.Group className="relative mb-10">
                                             <Form.Control
                                                 type="text"
@@ -399,37 +348,34 @@ const MechanicSignupForm: React.FC = () => {
                                                 onBlur={handleBlur}
                                                 required
                                                 placeholder=" "
-                                                className="peer border-b-2 border-gray-300 focus:border-blue-500 outline-none"
+                                                className="peer border-b-2 border-gray-300 focus:border-[#10B981] outline-none bg-transparent"
                                             />
                                             <Form.Label className="absolute left-0 top-0 text-gray-500 transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-focus:top-0 peer-focus:text-sm">
                                                 Business Phone No.
                                             </Form.Label>
-                                            <Form.Text className="text-muted">
-                                                Enter your contact number (e.g.,
-                                                +1234567890).
-                                            </Form.Text>
-                                        </Form.Group>
-
-                                        <Form.Group className="relative mb-10">
-                                            <Form.Control
-                                                type="email"
-                                                name="businessEmail"
-                                                value={formData.businessEmail}
-                                                onChange={handleChange}
-                                                onBlur={handleBlur}
-                                                required
-                                                placeholder=" "
-                                                className="peer border-b-2 border-gray-300 focus:border-blue-500 outline-none"
-                                            />
-                                            <Form.Label className="absolute left-0 top-0 text-gray-500 transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-focus:top-0 peer-focus:text-sm">
-                                                Business Email
-                                            </Form.Label>
-                                            <Form.Text className="text-muted">
-                                                Enter a valid email address
-                                                (e.g., name@example.com).
+                                            <Form.Text className="text-gray-400">
+                                                Enter your contact number (e.g., +1234567890).
                                             </Form.Text>
                                         </Form.Group>
                                     </div>
+                                    <Form.Group className="relative mb-10">
+                                        <Form.Control
+                                            type="text"
+                                            name="businessTagline"
+                                            value={formData.businessTagline}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                            required
+                                            placeholder=" "
+                                            className="peer border-b-2 border-gray-300 focus:border-[#10B981] outline-none bg-transparent"
+                                        />
+                                        <Form.Label className="absolute left-0 top-0 text-gray-500 transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-focus:top-0 peer-focus:text-sm">
+                                            Business Tagline
+                                        </Form.Label>
+                                        <Form.Text className="text-gray-400">
+                                            Enter a short tagline representing your business.
+                                        </Form.Text>
+                                    </Form.Group>
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                                         <Form.Group className="relative mb-10">
@@ -441,14 +387,13 @@ const MechanicSignupForm: React.FC = () => {
                                                 onBlur={handleBlur}
                                                 required
                                                 placeholder=" "
-                                                className="peer border-b-2 border-gray-300 focus:border-blue-500 outline-none"
+                                                className="peer border-b-2 border-gray-300 focus:border-[#10B981] outline-none bg-transparent"
                                             />
                                             <Form.Label className="absolute left-0 top-0 text-gray-500 transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-focus:top-0 peer-focus:text-sm">
                                                 Business Website
                                             </Form.Label>
-                                            <Form.Text className="text-muted">
-                                                Enter a valid URL (e.g.,
-                                                https://www.example.com).
+                                            <Form.Text className="text-gray-400">
+                                                Enter a valid URL (e.g., https://www.example.com).
                                             </Form.Text>
                                         </Form.Group>
 
@@ -462,32 +407,27 @@ const MechanicSignupForm: React.FC = () => {
                                                 onBlur={handleBlur}
                                                 required
                                                 placeholder=" "
-                                                className="peer border-b-2 border-gray-300 focus:border-blue-500 outline-none"
+                                                className="peer border-b-2 border-gray-300 focus:border-[#10B981] outline-none bg-transparent"
                                             />
                                             <Form.Label className="absolute left-0 top-0 text-gray-500 transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-focus:top-0 peer-focus:text-sm">
                                                 Total Business Locations
                                             </Form.Label>
-                                            <Form.Text className="text-muted">
-                                                Enter the number of business
-                                                locations.
+                                            <Form.Text className="text-gray-400">
+                                                Enter the number of business locations.
                                             </Form.Text>
                                         </Form.Group>
                                     </div>
 
                                     {/* Weekly Hours Section */}
                                     <div className="mb-6">
-                                        <h3 className="text-lg font-semibold mb-2">
+                                        <h3 className="text-lg font-semibold mb-2 text-[#10B981]">
                                             Operating Hours (24-hour format)
                                         </h3>
-                                        {/* Header row for operating hours */}
-                                        <div className="operating-hours-header flex flex-col sm:flex-row sm:justify-between items-center bg-gray-50 p-2 rounded-t-lg">
-                                            {/* You can add additional header description here if needed */}
-                                        </div>
                                         <div className="grid gap-4">
                                             {days.map((day, index) => (
                                                 <div
                                                     key={day.day}
-                                                    className="flex flex-col sm:flex-row sm:items-center justify-between bg-gray-50 p-3 rounded-lg"
+                                                    className="flex flex-col sm:flex-row sm:items-center justify-between bg-emerald-50 p-3 rounded-lg"
                                                 >
                                                     <span className="w-12 font-medium text-gray-700">
                                                         {day.day}
@@ -499,40 +439,23 @@ const MechanicSignupForm: React.FC = () => {
                                                         <Form.Check
                                                             type="switch"
                                                             id={`closed-${day.day}`}
-                                                            checked={
-                                                                day.isClosed
-                                                            }
-                                                            onChange={() =>
-                                                                toggleClosed(
-                                                                    index
-                                                                )
-                                                            }
+                                                            checked={day.isClosed}
+                                                            onChange={() => toggleClosed(index)}
                                                         />
                                                     </div>
                                                     <div className="flex items-center gap-4 mt-2 sm:mt-0">
                                                         <div
                                                             className={`flex gap-2 ${
-                                                                day.isClosed
-                                                                    ? 'opacity-50'
-                                                                    : ''
+                                                                day.isClosed ? 'opacity-50' : ''
                                                             }`}
                                                         >
                                                             <Form.Control
                                                                 type="time"
-                                                                value={
-                                                                    day.startTime
-                                                                }
+                                                                value={day.startTime}
                                                                 onChange={(e) =>
-                                                                    handleTimeChange(
-                                                                        index,
-                                                                        'startTime',
-                                                                        e.target
-                                                                            .value
-                                                                    )
+                                                                    handleTimeChange(index, 'startTime', e.target.value)
                                                                 }
-                                                                disabled={
-                                                                    day.isClosed
-                                                                }
+                                                                disabled={day.isClosed}
                                                                 className="w-32 border rounded px-2 py-1"
                                                             />
                                                             <span className="self-center text-gray-500">
@@ -540,20 +463,11 @@ const MechanicSignupForm: React.FC = () => {
                                                             </span>
                                                             <Form.Control
                                                                 type="time"
-                                                                value={
-                                                                    day.endTime
-                                                                }
+                                                                value={day.endTime}
                                                                 onChange={(e) =>
-                                                                    handleTimeChange(
-                                                                        index,
-                                                                        'endTime',
-                                                                        e.target
-                                                                            .value
-                                                                    )
+                                                                    handleTimeChange(index, 'endTime', e.target.value)
                                                                 }
-                                                                disabled={
-                                                                    day.isClosed
-                                                                }
+                                                                disabled={day.isClosed}
                                                                 className="w-32 border rounded px-2 py-1"
                                                             />
                                                         </div>
@@ -573,14 +487,13 @@ const MechanicSignupForm: React.FC = () => {
                                                 onBlur={handleBlur}
                                                 required
                                                 placeholder=" "
-                                                className="peer border-b-2 border-gray-300 focus:border-blue-500 outline-none"
+                                                className="peer border-b-2 border-gray-300 focus:border-[#10B981] outline-none bg-transparent"
                                             />
                                             <Form.Label className="absolute left-0 top-0 text-gray-500 transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-focus:top-0 peer-focus:text-sm">
                                                 Business Special Hours
                                             </Form.Label>
-                                            <Form.Text className="text-muted">
-                                                Enter any special operating
-                                                hours
+                                            <Form.Text className="text-gray-400">
+                                                Enter any special operating hours
                                             </Form.Text>
                                         </Form.Group>
                                     </div>
@@ -589,22 +502,19 @@ const MechanicSignupForm: React.FC = () => {
                                             <Form.Control
                                                 as="textarea"
                                                 name="businessDescription"
-                                                value={
-                                                    formData.businessDescription
-                                                }
+                                                value={formData.businessDescription}
                                                 onChange={handleChange}
                                                 onBlur={handleBlur}
                                                 required
                                                 placeholder=" "
                                                 rows={4}
-                                                className="peer border rounded p-2 focus:border-blue-500 outline-none"
+                                                className="peer border rounded p-2 focus:border-[#10B981] outline-none bg-transparent"
                                             />
                                             <Form.Label className="absolute left-2 top-0 text-gray-500 transition-all peer-focus:text-sm">
                                                 Business Description
                                             </Form.Label>
-                                            <Form.Text className="text-muted">
-                                                Provide a brief description of
-                                                your business.
+                                            <Form.Text className="text-gray-400">
+                                                Provide a brief description of your business.
                                             </Form.Text>
                                         </Form.Group>
                                     </div>
@@ -613,7 +523,7 @@ const MechanicSignupForm: React.FC = () => {
                                         {currentStep !== 0 && (
                                             <Button
                                                 type="button"
-                                                className="bg-gray-500 text-white px-4 py-2 rounded"
+                                                className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
                                                 onClick={handlePrevious}
                                             >
                                                 Previous
@@ -621,7 +531,7 @@ const MechanicSignupForm: React.FC = () => {
                                         )}
                                         <Button
                                             type="button"
-                                            className="bg-blue-500 text-white px-4 py-2 rounded"
+                                            className="bg-[#10B981] text-white px-6 py-2 rounded shadow hover:bg-[#059669] transition-colors"
                                             onClick={handleNext}
                                         >
                                             Next
@@ -635,25 +545,21 @@ const MechanicSignupForm: React.FC = () => {
                                 <fieldset>
                                     <div className="mb-6">
                                         <ServiceInterView
-                                            initialSelectedServices={
-                                                formData.services
-                                            }
-                                            onSelectionChange={
-                                                handleServiceSelection
-                                            }
+                                            initialSelectedServices={formData.services}
+                                            onSelectionChange={handleServiceSelection}
                                         />
                                     </div>
                                     <div className="flex justify-between mt-4">
                                         <Button
                                             type="button"
-                                            className="bg-gray-500 text-white px-4 py-2 rounded"
+                                            className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
                                             onClick={handlePrevious}
                                         >
                                             Previous
                                         </Button>
                                         <Button
                                             type="button"
-                                            className="bg-blue-500 text-white px-4 py-2 rounded"
+                                            className="bg-[#10B981] text-white px-6 py-2 rounded shadow hover:bg-[#059669] transition-colors"
                                             onClick={handleNext}
                                         >
                                             Next
@@ -671,20 +577,17 @@ const MechanicSignupForm: React.FC = () => {
                                                 type="text"
                                                 name="fullAddress"
                                                 value={Address}
-                                                onChange={(e) =>
-                                                    setAddress(e.target.value)
-                                                }
+                                                onChange={(e) => setAddress(e.target.value)}
                                                 onBlur={handleBlur}
                                                 required
                                                 placeholder=" "
-                                                className="peer border-b-2 border-gray-300 focus:border-blue-500 outline-none"
+                                                className="peer border-b-2 border-gray-300 focus:border-[#10B981] outline-none bg-transparent"
                                             />
                                             <Form.Label className="absolute left-0 top-0 text-gray-500 transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-focus:top-0 peer-focus:text-sm">
                                                 Full Address
                                             </Form.Label>
-                                            <Form.Text className="text-muted">
-                                                Enter the complete address of
-                                                your business location.
+                                            <Form.Text className="text-gray-400">
+                                                Enter the complete address of your business location.
                                             </Form.Text>
                                         </Form.Group>
                                         <Form.Group className="relative mb-10">
@@ -696,14 +599,13 @@ const MechanicSignupForm: React.FC = () => {
                                                 onBlur={handleBlur}
                                                 required
                                                 placeholder=" "
-                                                className="peer border-b-2 border-gray-300 focus:border-blue-500 outline-none"
+                                                className="peer border-b-2 border-gray-300 focus:border-[#10B981] outline-none bg-transparent"
                                             />
                                             <Form.Label className="absolute left-0 top-0 text-gray-500 transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-focus:top-0 peer-focus:text-sm">
                                                 City
                                             </Form.Label>
-                                            <Form.Text className="text-muted">
-                                                Enter the city where your
-                                                business is located.
+                                            <Form.Text className="text-gray-400">
+                                                Enter the city where your business is located.
                                             </Form.Text>
                                         </Form.Group>
                                     </div>
@@ -718,14 +620,13 @@ const MechanicSignupForm: React.FC = () => {
                                                 onBlur={handleBlur}
                                                 required
                                                 placeholder=" "
-                                                className="peer border-b-2 border-gray-300 focus:border-blue-500 outline-none"
+                                                className="peer border-b-2 border-gray-300 focus:border-[#10B981] outline-none bg-transparent"
                                             />
                                             <Form.Label className="absolute left-0 top-0 text-gray-500 transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-focus:top-0 peer-focus:text-sm">
                                                 State
                                             </Form.Label>
-                                            <Form.Text className="text-muted">
-                                                Enter the state where your
-                                                business is located.
+                                            <Form.Text className="text-gray-400">
+                                                Enter the state where your business is located.
                                             </Form.Text>
                                         </Form.Group>
                                         <Form.Group className="relative mb-10">
@@ -737,12 +638,12 @@ const MechanicSignupForm: React.FC = () => {
                                                 onBlur={handleBlur}
                                                 required
                                                 placeholder=" "
-                                                className="peer border-b-2 border-gray-300 focus:border-blue-500 outline-none"
+                                                className="peer border-b-2 border-gray-300 focus:border-[#10B981] outline-none bg-transparent"
                                             />
                                             <Form.Label className="absolute left-0 top-0 text-gray-500 transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-focus:top-0 peer-focus:text-sm">
                                                 Zipcode
                                             </Form.Label>
-                                            <Form.Text className="text-muted">
+                                            <Form.Text className="text-gray-400">
                                                 Enter the postal code.
                                             </Form.Text>
                                         </Form.Group>
@@ -758,21 +659,18 @@ const MechanicSignupForm: React.FC = () => {
                                     <div className="flex justify-between mt-4">
                                         <Button
                                             type="button"
-                                            className="bg-gray-500 text-white px-4 py-2 rounded"
+                                            className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
                                             onClick={handlePrevious}
                                         >
                                             Previous
                                         </Button>
                                         <Button
                                             type="submit"
-                                            className="bg-green-500 text-white px-4 py-2 rounded"
+                                            className="bg-[#10B981] text-white px-6 py-2 rounded shadow hover:bg-[#059669] transition-colors"
                                             disabled={loading}
                                         >
                                             {loading ? (
-                                                <Spinner
-                                                    animation="border"
-                                                    size="sm"
-                                                />
+                                                <Spinner animation="border" size="sm" />
                                             ) : (
                                                 'Submit'
                                             )}
@@ -782,10 +680,10 @@ const MechanicSignupForm: React.FC = () => {
                             )}
                         </Form>
                     </div>
-                </div>
-            ) : (
-                <SuccessAnimation />
-            )}
+                ) : (
+                    <SuccessAnimation />
+                )}
+            </main>
         </>
     );
 };

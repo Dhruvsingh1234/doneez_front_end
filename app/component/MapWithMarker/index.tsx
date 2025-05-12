@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Spinner } from 'react-bootstrap';
 import { UserLocationMapProps } from '@/app/utils/types';
-
+ 
 const UserLocationMap: React.FC<UserLocationMapProps> = ({
     addressInput,
     addressfnc,

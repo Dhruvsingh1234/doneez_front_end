@@ -17,10 +17,7 @@ export default function Home() {
     }, []);
 
     return (
-        <div className='bg-white'>
-            <CustomHeader />
-            <div className="flex justify-center w-full text-center max-sm:text-left max-sm:p-[20px]">
-                <div className="max-w-[950px] mt-[48px] max-sm:mt-6 max-sm:flex max-sm:flex-col max-sm:justify-center max-sm:items-center w-full">
+     <>
                     {/* <div className="mt-[24px] mb-[20px] w-full">
             <h1 className="text-center px-2 max-sm:p-0 max-sm:text-left font-bold max-md:text-6xl max-sm:text-4xl text-[65px] leading-[80px] tracking-[-0.02em]">Vehicle service, made easy
               <div className="text-[#0098d3]">Fair Price Guarantee.</div>
@@ -64,9 +61,6 @@ export default function Home() {
             </div>
           </div> */}
                     <Landing />
-                </div>
-            </div>
-            <ServiceFooter />
-        </div>
+                    </>
     );
 }

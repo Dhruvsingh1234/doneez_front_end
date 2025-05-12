@@ -2,8 +2,12 @@ import axios, {
     AxiosInstance,
     AxiosRequestConfig,
     AxiosResponse,
+    AxiosError,
     InternalAxiosRequestConfig,
 } from 'axios';
+
+import toast from 'react-hot-toast';
+ 
 
 import { getStorage } from './helper';
 // Base URL configuration
@@ -12,31 +16,66 @@ const baseURL = process.env.NEXT_PUBLIC_HOST_URL;
 if (!baseURL) {
     throw new Error('HOST_URL is not defined in environment variables.');
 }
-
-// Function to create an Axios instance with default settings
-function createAxiosClient(contentType: string): AxiosInstance {
+interface ApiResponse<T> {
+    data: T;
+    status: number;
+    statusText: string;
+  }
+  
+  // Error interface
+  interface ApiError {
+    message: string;
+    status: number;
+    details?: any;
+  }
+  
+  
+  const createAxiosClient = (): AxiosInstance => {
     const client = axios.create({
-        baseURL,
-        timeout: 5000,
-        headers: {
-            'Content-Type': contentType,
-            Accept: contentType,
-        },
+      baseURL,
+      timeout: 15000,
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
     });
-
+  
+    // Request interceptor
     client.interceptors.request.use(
-        (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
-            const token = getStorage('access_token');
-            if (token) {
-                config.headers.Authorization = `Bearer ${token}`;
-            }
-            return config;
+      (config: InternalAxiosRequestConfig) => {
+        const token = getStorage('access_token');
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
         }
+        return config;
+      },
+      (error) => Promise.reject(error)
     );
-
+  
+    // Response interceptor
+    client.interceptors.response.use(
+      (response) => response,
+      (error: AxiosError) => {
+        const status = error.response?.status;
+        const errorData = error.response?.data as any;
+        
+        const apiError: ApiError = {
+          message: errorData?.detail || errorData?.message || 'An unexpected error occurred',
+          status: status || 500,
+          details: errorData
+        };
+  
+        if (status === 401) {
+          toast.error('Session expired. Please login again.');
+          window.location.href = '/sign-in';
+        }
+  
+        return Promise.reject(apiError);
+      }
+    );
+  
     return client;
-}
-
+  };
 // Function to create an Axios instance with default settings
 function adminCreateAxiosClient(contentType: string): AxiosInstance {
     const client = axios.create({
@@ -62,9 +101,9 @@ function adminCreateAxiosClient(contentType: string): AxiosInstance {
 }
 
 // Axios instances for different content types
-const axiosClient = createAxiosClient('application/json');
+const axiosClient = createAxiosClient();
 const adminAxiosClient = adminCreateAxiosClient('application/json')
-const axiosClientWithFiles = createAxiosClient('multipart/form-data');
+const axiosClientWithFiles = createAxiosClient();
 
 // HTTP request functions
 export function getRequest<T = any>(
@@ -84,16 +123,33 @@ export function adminGetRequest<T = any>(
     return adminAxiosClient.get<T>(URL, { params, ...option });
 }
 
-export function postRequest<T = any>(
+// Generic request handler
+const handleRequest = async <T>(request: Promise<AxiosResponse<T>>): Promise<ApiResponse<T>> => {
+    try {
+      const response = await request;
+      return {
+        data: response.data,
+        status: response.status,
+        statusText: response.statusText
+      };
+    } catch (error) {
+      const axiosError = error as AxiosError<ApiError>;
+      throw {
+        message: axiosError.response?.data?.message || axiosError.message,
+        status: axiosError.response?.status || 500,
+        details: axiosError.response?.data
+      };
+    }
+  };
+  
+  // HTTP request functions
+  export const postRequest = async <T = any>(
     URL: string,
-    payload?: any
-): Promise<AxiosResponse<T>> {
-    return axiosClient.post<T>(URL, payload, {
-        headers: {
-            "Content-Type": "application/json",  // Ensure JSON format
-        },
-    });
-}
+    payload?: object,
+    config?: AxiosRequestConfig
+  ): Promise<ApiResponse<T>> => {
+    return handleRequest<T>(axiosClient.post<T>(URL, payload, config));
+  };
 
 export function adminPostRequest<T = any>(
     URL: string,
