@@ -116,7 +116,7 @@ export default function ConfirmAppointment() {
 
     try {
        // The postRequest will automatically handle authorization
-    const response = await postRequest('/api/service-request/', payload);
+    const response = await postRequest('/users/service-request/', payload);
     
     if (response.status >= 200 && response.status < 300) {
       toast.success('Service request created successfully!');}

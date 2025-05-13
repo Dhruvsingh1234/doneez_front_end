@@ -25,9 +25,9 @@ const Dashboard = ({ role }: { role: 'customer' | 'mechanic' }) => {
     const paymentStatus = searchParams.get('payment');
     const quoteId = searchParams.get('quote');
     if (paymentStatus === 'success' && quoteId) {
-      getRequest(`/quotes/${quoteId}/`).then(res => {
+      getRequest(`users/quotes/${quoteId}/`).then(res => {
         const serviceRequestId = res.data.service_request;
-        getRequest(`/service-requests/${serviceRequestId}/`).then(srRes => {
+        getRequest(`users/service-requests/${serviceRequestId}/`).then(srRes => {
           setAutoOpenRequest({ id: serviceRequestId, status: srRes.data.status });
         });
       });
@@ -40,8 +40,8 @@ const Dashboard = ({ role }: { role: 'customer' | 'mechanic' }) => {
       setLoading(true);
       try {
         const endpoint = role === 'customer'
-          ? '/user-dashboard/'
-          : '/mechanic-dashboard/';
+          ? 'users/user-dashboard/'
+          : 'users/mechanic-dashboard/';
         const response = await getRequest(endpoint);
         setData(response.data);
       } catch (error) {

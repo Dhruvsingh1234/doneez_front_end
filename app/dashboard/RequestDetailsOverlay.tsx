@@ -36,7 +36,7 @@ const MechanicReviewsOverlay = ({
 
   useEffect(() => {
     setLoading(true);
-    getRequest(`/mechanics/${mechanic.id}/reviews/`)
+    getRequest(`users/mechanics/${mechanic.id}/reviews/`)
       .then((res) => setReviews(res.data))
       .catch(() => setReviews([]))
       .finally(() => setLoading(false));
@@ -105,7 +105,7 @@ const AcceptQuoteOverlay = ({
   const handlePayDeposit = async () => {
     setLoading(true);
     try {
-      const res = await postRequest<{ checkout_url: string }>(`/quotes/${quote.id}/accept/`);
+      const res = await postRequest<{ checkout_url: string }>(`users/quotes/${quote.id}/accept/`);
       window.location.href = res.data.checkout_url;
     } catch (e) {
       // handle error
@@ -159,18 +159,18 @@ const RequestOverlay = ({
   useEffect(() => {
     setLoading(true);
     getRequest(isCustomer
-      ? `/service-requests/${requestId}/`
-      : `/mechanic-requests/${requestId}/`
+      ? `users/service-requests/${requestId}/`
+      : `users/mechanic-requests/${requestId}/`
     )
       .then((res) => setDetails(res.data))
       .catch(() => setDetails(null));
-    getRequest(`/service-requests/${requestId}/quotes/`)
+    getRequest(`users/service-requests/${requestId}/quotes/`)
       .then((res) => setQuotes(res.data))
       .catch(() => setQuotes([]));
-    getRequest(`/service-requests/${requestId}/appointment/`)
+    getRequest(`users/service-requests/${requestId}/appointment/`)
       .then((res) => setAppointment(res.data))
       .catch(() => setAppointment(null));
-    getRequest(`/service-requests/${requestId}/reviews/`)
+    getRequest(`users/service-requests/${requestId}/reviews/`)
       .then((res) => setReviews(res.data))
       .catch(() => setReviews([]))
       .finally(() => setLoading(false));

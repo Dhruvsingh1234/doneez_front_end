@@ -15,8 +15,8 @@ import CustomHeader from '@/app/headers/CustomHeader';
 import { setStorage } from '@/app/utils/helper';
 
 interface MechanicSignupFormProps {
-    password?: string;
-    email?: string;
+    password: string;
+    email: string;
 }
 const MechanicSignupForm: React.FC<MechanicSignupFormProps> = ({ password, email }) => {
     const [days, setDays] = useState<DayHours[]>([
