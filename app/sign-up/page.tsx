@@ -77,8 +77,8 @@ export default function SignUp() {
 
   // Form states
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
+    first_name: '',
+    last_name: '',
     email: '',
     password: '',
   });
@@ -102,8 +102,8 @@ export default function SignUp() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     if (selectedRole === 'Customer') {
-      if (!formData.firstName.trim()) newErrors.firstName = 'First name is required';
-      if (!formData.lastName.trim()) newErrors.lastName = 'Last name is required';
+      if (!formData.first_name.trim()) newErrors.firstName = 'First name is required';
+      if (!formData.last_name.trim()) newErrors.lastName = 'Last name is required';
     }
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
@@ -122,6 +122,7 @@ export default function SignUp() {
   const handleSubmit = async () => {
     if (!validateForm()) return;
     setLoading(true);
+    setErrors({});
     try {
       const payload = {
         ...formData,
@@ -139,7 +140,25 @@ export default function SignUp() {
         setMechanicSignup(true);
       }
     } catch (error: any) {
-      toast.error(error.message || 'Registration failed. Please try again.');
+      // Improved error handling for backend validation errors
+      if (error.details) {
+        // Django REST Framework returns errors as { field: [msg, ...], ... }
+        const backendErrors = error.details;
+        const newErrors: Record<string, string> = {};
+        // Map backend field names to frontend field names
+        if (backendErrors.first_name) newErrors.firstName = backendErrors.first_name[0];
+        if (backendErrors.last_name) newErrors.lastName = backendErrors.last_name[0];
+        if (backendErrors.email) newErrors.email = backendErrors.email[0];
+        if (backendErrors.password) newErrors.password = backendErrors.password[0];
+        if (backendErrors.non_field_errors) toast.error(backendErrors.non_field_errors[0]);
+        setErrors(newErrors);
+        // If no field errors, show generic
+        if (Object.keys(newErrors).length === 0) {
+          toast.error(error.message || 'Registration failed. Please try again.');
+        }
+      } else {
+        toast.error(error.message || 'Registration failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -244,15 +263,15 @@ export default function SignUp() {
                           <>
                             <FloatingInput
                               label="First Name"
-                              value={formData.firstName}
-                              onChange={(e: any) => setFormData({ ...formData, firstName: e.target.value })}
+                              value={formData.first_name}
+                              onChange={(e: any) => setFormData({ ...formData, first_name: e.target.value })}
                               error={errors.firstName}
                               icon={UserCircleIcon}
                             />
                             <FloatingInput
                               label="Last Name"
-                              value={formData.lastName}
-                              onChange={(e: any) => setFormData({ ...formData, lastName: e.target.value })}
+                              value={formData.last_name}
+                              onChange={(e: any) => setFormData({ ...formData, last_name: e.target.value })}
                               icon={UserCircleIcon}
                               error={errors.lastName}
                             />
