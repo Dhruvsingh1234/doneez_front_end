@@ -59,17 +59,24 @@ const Dashboard = ({ role }: { role: 'customer' | 'mechanic' }) => {
   }, [role]);
 
   return (
-
     <>
-
      <CustomHeader />
-    
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-blue-50">
+      {/* Get a Quote Button */}
+      <div className="flex justify-end max-w-6xl mx-auto px-4 pt-8">
+        <a
+          href="/RFQ/Services"
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-blue-500 text-white font-bold shadow-lg hover:from-emerald-600 hover:to-blue-600 transition-all text-lg"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
+          Get a Quote
+        </a>
+      </div>
       {searchParams.get('payment') === 'success' && (
-  <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-emerald-100 border border-emerald-300 text-emerald-800 px-6 py-3 rounded-xl shadow-lg z-50">
-    Payment successful! Your appointment has been created.
-  </div>
-)}
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-emerald-100 border border-emerald-300 text-emerald-800 px-6 py-3 rounded-xl shadow-lg z-50">
+          Payment successful! Your appointment has been created.
+        </div>
+      )}
       <div className="max-w-6xl mx-auto px-4 py-10">
         {/* <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-extrabold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent tracking-tight">

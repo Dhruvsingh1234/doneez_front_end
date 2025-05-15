@@ -58,18 +58,19 @@ interface ApiResponse<T> {
       (error: AxiosError) => {
         const status = error.response?.status;
         const errorData = error.response?.data as any;
-        
+        // Log full error details for debugging
+        console.error('API Error:', errorData);
         const apiError: ApiError = {
           message: errorData?.detail || errorData?.message || 'An unexpected error occurred',
           status: status || 500,
           details: errorData
         };
-  
+
         if (status === 401) {
           toast.error('Session expired. Please login again.');
           window.location.href = '/sign-in';
         }
-  
+
         return Promise.reject(apiError);
       }
     );

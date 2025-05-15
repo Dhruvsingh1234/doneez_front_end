@@ -410,8 +410,7 @@ export default function HomePage() {
           How DoneEZ Works
         </h2>
         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-          Getting your car serviced has never been easier with our simple 3-step
-          process
+          Car service, made easy—in just 3 simple steps
         </p>
       </div>
       <div className="relative">
@@ -422,12 +421,11 @@ export default function HomePage() {
                 1
                 <div className="absolute -inset-2 rounded-full bg-emerald-200/30 animate-ping opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-3">
+              <h3 className="text-2xl font-bold text-  -800 mb-3">
                 Request Service
               </h3>
               <p className="text-gray-600 mb-4">
-                Tell us what service you need or describe your vehicle's issue
-                through our easy-to-use platform.
+                Tell us what you  need or describe the issue using our easy online platform.
               </p>
               <div className="flex items-center text-emerald-500 font-medium">
                 <i className="fas fa-mobile-alt mr-2" /> Mobile Webapp Available
@@ -441,11 +439,12 @@ export default function HomePage() {
                 <div className="absolute -inset-2 rounded-full bg-emerald-200/30 animate-ping opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
               <h3 className="text-2xl font-bold text-gray-800 mb-3">
-                Get Matched
+                Get Matched & Book
               </h3>
               <p className="text-gray-600 mb-4">
-                We instantly connect you with certified professionals in your
-                area who can help.
+                Receive instant quotes from certified local mechanics who are ready now. 
+Choose your provider and book with a small deposit—it goes toward your 
+total cost.
               </p>
               <div className="flex items-center text-emerald-500 font-medium">
                 <i className="fas fa-bolt mr-2" /> Instant Quotes
@@ -462,8 +461,8 @@ export default function HomePage() {
                 Enjoy Service
               </h3>
               <p className="text-gray-600 mb-4">
-                Choose your preferred provider and schedule service at your
-                convenience.
+               Service happens on your schedule. 
+Pay the balance in person when the job’s done. 
               </p>
               <div className="flex items-center text-emerald-500 font-medium">
                 <i className="fas fa-calendar-check mr-2" /> Flexible Scheduling
