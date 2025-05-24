@@ -5,20 +5,20 @@ import { Button, Form, Spinner } from 'react-bootstrap';
 import 'tailwindcss/tailwind.css';
 import { postRequest } from '../../utils/axios';
 import './styles.css';
-import Link from 'next/link';
 import toast, { Toaster } from 'react-hot-toast';
 import MapWithMarker from '../MapWithMarker';
 import ServiceInterView from '../DoneezServices';
 import SuccessAnimation from './SuccessAnimation';
 import { DayHours } from '@/app/utils/types';
-import CustomHeader from '@/app/headers/CustomHeader';
 import { setStorage } from '@/app/utils/helper';
 
 interface MechanicSignupFormProps {
     password: string;
     email: string;
+    first_name : string;
+    last_name : string;
 }
-const MechanicSignupForm: React.FC<MechanicSignupFormProps> = ({ password, email }) => {
+const MechanicSignupForm: React.FC<MechanicSignupFormProps> = ({ password, email , first_name , last_name}) => {
     const [days, setDays] = useState<DayHours[]>([
         { day: 'Mon', startTime: '09:00', endTime: '17:00', isClosed: false },
         { day: 'Tue', startTime: '09:00', endTime: '17:00', isClosed: false },
@@ -152,6 +152,12 @@ const MechanicSignupForm: React.FC<MechanicSignupFormProps> = ({ password, email
         }));
     };
 
+    // Add password strength check (optional)
+    const isPasswordStrong = (pwd: string) => {
+        // Example: at least 8 chars, not common, has number, etc.
+        return pwd.length >= 8 && !['password', '12345678', 'qwerty'].includes(pwd.toLowerCase());
+    };
+
     const handleNext = () => {
         let errors: string[] = [];
         switch (currentStep) {
@@ -169,6 +175,10 @@ const MechanicSignupForm: React.FC<MechanicSignupFormProps> = ({ password, email
                     const error = validateField(name, value.toString());
                     if (error) errors.push(error);
                 });
+                // Password strength check
+                if (!isPasswordStrong(password)) {
+                    errors.push('Password is too common or weak.');
+                }
                 break;
             case 1:
                 if (formData.services.length === 0) {
@@ -194,7 +204,15 @@ const MechanicSignupForm: React.FC<MechanicSignupFormProps> = ({ password, email
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        const updatedFormData = { ...formData, hoursOfOperation: days, password: password, businessEmail: email };
+        const updatedFormData = {
+            ...formData,
+            hoursOfOperation: days,
+            password: password,
+            businessEmail: email,
+           first_name : first_name,
+           last_name : last_name
+           
+        };
         const errors: string[] = [];
 
         const fieldsToValidate = [
@@ -209,6 +227,8 @@ const MechanicSignupForm: React.FC<MechanicSignupFormProps> = ({ password, email
             { name: 'city', value: updatedFormData.city },
             { name: 'state', value: updatedFormData.state },
             { name: 'zipcode', value: updatedFormData.zipcode },
+            { name: 'first_name', value: updatedFormData.first_name },
+            { name: 'last_name', value: updatedFormData.last_name },
         ];
 
         fieldsToValidate.forEach(({ name, value }) => {
@@ -216,8 +236,17 @@ const MechanicSignupForm: React.FC<MechanicSignupFormProps> = ({ password, email
             if (error) errors.push(error);
         });
 
-        if (updatedFormData.services.length === 0) {
-            errors.push('Please select at least one service.');
+        if (!isPasswordStrong(password)) {
+            errors.push('Password is too common or weak.');
+        }
+
+        // Check for duplicate email (frontend validation)
+        const existingUsers = JSON.parse(localStorage.getItem('user') || '[]');
+        const isEmailDuplicate = existingUsers.some(
+            (user: any) => user.email === email
+        );
+        if (isEmailDuplicate) {
+            errors.push('Email is already in use. Please use a different email.');
         }
 
         const hasValidHours = days.some((day) => !day.isClosed);
@@ -244,9 +273,26 @@ const MechanicSignupForm: React.FC<MechanicSignupFormProps> = ({ password, email
             setTimeout(() => {
                 window.location.href = '/dashboard';
             }, 2000);
-        } catch (error) {
-            alert(error);
-            toast.error('Signup Failed. Please try again.');
+                } catch (error: any) {
+            // Try to extract backend validation errors
+            if (error?.response?.data) {
+                const details = error.response.data.details || error.response.data;
+                if (typeof details === 'object') {
+                    Object.entries(details).forEach(([field, messages]) => {
+                        if (Array.isArray(messages)) {
+                            messages.forEach((msg) => toast.error(`${field}: ${msg}`));
+                        } else {
+                            toast.error(`${field}: ${messages}`);
+                        }
+                    });
+                } else if (typeof details === 'string') {
+                    toast.error(details);
+                } else {
+                    toast.error('Signup Failed. Please try again.');
+                }
+            } else {
+                toast.error(error.message || 'Signup Failed. Please try again.');
+            }
         } finally {
             setLoading(false);
         }
@@ -264,13 +310,27 @@ const MechanicSignupForm: React.FC<MechanicSignupFormProps> = ({ password, email
 
     return (
         <>
+         <style>
+                {`
+                .mechanic-signup-main {
+                width: 72%!important;
+                }
+                    @media (max-width: 700px) {
+                        .mechanic-signup-main {
+                            width: 98% !important;
+                        }
+                    }
+                `}
+            </style>
             <Toaster position="top-center" reverseOrder={false} />
-            {/* Header stays at the top, not beside the form */}
-            <CustomHeader />
+           
 
-            <main className="min-h-screen bg-gradient-to-br from-emerald-50 to-green-50 flex flex-col items-center py-8">
+            <main className=" bg-gradient-to-br from-emerald-50 to-green-50 flex flex-col items-center py-8 mechanic-signup-main " >
                 {isUnSubmitted ? (
-                    <div className="w-full max-w-3xl bg-white p-10 rounded-2xl shadow-2xl">
+                    <div
+                        className=" bg-white p-10 rounded-2xl shadow-2xl "
+                        style={{ maxWidth: '100%', width: '100%' }}
+                    >
                         <h2 className="text-2xl font-bold text-center mb-8 text-[#10B981]">Mechanic Signup</h2>
                         <Form onSubmit={handleSubmit}>
                             {/* Progress Steps */}

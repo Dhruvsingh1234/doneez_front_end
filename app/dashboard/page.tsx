@@ -19,21 +19,22 @@ const Dashboard = ({ role }: { role: 'customer' | 'mechanic' }) => {
   const [autoOpenRequest, setAutoOpenRequest] = useState<{ id: number; status: string } | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [handledPayment, setHandledPayment] = useState(false);
 
-  useEffect(() => {
-    // Check for Stripe payment success in URL
-    const paymentStatus = searchParams.get('payment');
-    const quoteId = searchParams.get('quote');
-    if (paymentStatus === 'success' && quoteId) {
-      getRequest(`users/quotes/${quoteId}/`).then(res => {
-        const serviceRequestId = res.data.service_request;
-        getRequest(`users/service-requests/${serviceRequestId}/`).then(srRes => {
-          setAutoOpenRequest({ id: serviceRequestId, status: srRes.data.status });
-        });
+useEffect(() => {
+  const paymentStatus = searchParams.get('payment');
+  const quoteId = searchParams.get('quote');
+  if (paymentStatus === 'success' && quoteId && !handledPayment) {
+    setHandledPayment(true); // prevent re-running
+    getRequest(`users/quotes/${quoteId}/`).then(res => {
+      const serviceRequestId = res.data.service_request;
+      getRequest(`users/service-requests/${serviceRequestId}/`).then(srRes => {
+        setAutoOpenRequest({ id: serviceRequestId, status: srRes.data.status });
       });
-      router.replace('/dashboard');
-    }
-  }, [searchParams, router]);
+    });
+    router.replace('/dashboard');
+  }
+}, [searchParams, router, handledPayment]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -65,7 +66,7 @@ const Dashboard = ({ role }: { role: 'customer' | 'mechanic' }) => {
       {/* Get a Quote Button */}
       <div className="flex justify-end max-w-6xl mx-auto px-4 pt-8">
         <a
-          href="/RFQ/Services"
+          href="/RFQ/"
           className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-blue-500 text-white font-bold shadow-lg hover:from-emerald-600 hover:to-blue-600 transition-all text-lg"
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>

@@ -176,7 +176,7 @@ export default function SignUp() {
             exit={{ opacity: 0, y: -40, transition: { duration: 0.3 } }}
             className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 to-green-50"
           >
-            <MechanicSignupForm password={formData.password} email={formData.email} />
+            <MechanicSignupForm password={formData.password} email={formData.email} first_name = {formData.first_name} last_name = {formData.last_name} />
           </motion.div>
         ) : (
           <motion.div
@@ -259,7 +259,7 @@ export default function SignUp() {
                         exit="exit"
                         className="space-y-6"
                       >
-                        {selectedRole === "Customer" && (
+                        
                           <>
                             <FloatingInput
                               label="First Name"
@@ -276,7 +276,7 @@ export default function SignUp() {
                               error={errors.lastName}
                             />
                           </>
-                        )}
+                       
                         <FloatingInput
                           label="Email Address"
                           type="email"

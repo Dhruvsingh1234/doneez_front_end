@@ -55,7 +55,7 @@ export interface MechanicSignupData {
         phoneNumber: string;
         businessName: string;
         businessHours: string;
-        location: string; // Added location field
+        location: string; 
         password: string;
         confirmPassword: string;
       
