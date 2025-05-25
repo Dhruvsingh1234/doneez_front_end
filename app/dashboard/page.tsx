@@ -24,6 +24,7 @@ const Dashboard = ({ role }: { role: 'customer' | 'mechanic' }) => {
 useEffect(() => {
   const paymentStatus = searchParams.get('payment');
   const quoteId = searchParams.get('quote');
+  // Only run this effect if paymentStatus is 'success' and quoteId exists
   if (paymentStatus === 'success' && quoteId && !handledPayment) {
     setHandledPayment(true); // prevent re-running
     getRequest(`users/quotes/${quoteId}/`).then(res => {
@@ -32,8 +33,10 @@ useEffect(() => {
         setAutoOpenRequest({ id: serviceRequestId, status: srRes.data.status });
       });
     });
+    // Remove payment and quote params from URL only if they exist
     router.replace('/dashboard');
   }
+  // Do nothing if payment param is not present
 }, [searchParams, router, handledPayment]);
 
   useEffect(() => {

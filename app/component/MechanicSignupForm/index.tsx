@@ -121,9 +121,12 @@ const MechanicSignupForm: React.FC<MechanicSignupFormProps> = ({ password, email
             case 'state':
                 if (!value.trim()) return 'State cannot be empty.';
                 break;
-            case 'zipcode':
-                if (!value.trim()) return 'Zipcode cannot be empty.';
-                break;
+            case 'zipcode': {
+                // US zip code: 5 digits, not all 0s or 9s, not empty
+                if (!/^\d{5}$/.test(value)) return 'Zip code must be 5 digits.';
+                if (/^(0{5}|9{5})$/.test(value)) return 'Zip code is not valid.';
+                return null;
+            }
             default:
                 break;
         }
