@@ -21,9 +21,10 @@ const Dashboard = ({ role }: { role: 'customer' | 'mechanic' }) => {
   const searchParams = useSearchParams();
   const [handledPayment, setHandledPayment] = useState(false);
 
+const paymentStatus = searchParams.get('payment');
+const quoteId = searchParams.get('quote');
+
 useEffect(() => {
-  const paymentStatus = searchParams.get('payment');
-  const quoteId = searchParams.get('quote');
   // Only run this effect if paymentStatus is 'success' and quoteId exists
   if (paymentStatus === 'success' && quoteId && !handledPayment) {
     setHandledPayment(true); // prevent re-running
@@ -37,7 +38,7 @@ useEffect(() => {
     router.replace('/dashboard');
   }
   // Do nothing if payment param is not present
-}, [searchParams, router, handledPayment]);
+}, [paymentStatus, quoteId, router, handledPayment]);
 
   useEffect(() => {
     const fetchData = async () => {

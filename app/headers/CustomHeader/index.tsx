@@ -13,7 +13,7 @@ export default function CustomHeader() {
         const refresh = getStorage('refresh_token');
         if (refresh) {
             try {
-                await fetch('/api/logout/', {
+                await fetch('/users/logout/', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ refresh }),
