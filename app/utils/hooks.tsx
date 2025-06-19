@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { getStorage , removeStorage } from '@/app/utils/helper';
+import { getStorage, removeStorage, isTokenExpired } from '@/app/utils/helper';
 
 export default function useAuth() {
   const router = useRouter();
@@ -8,20 +8,33 @@ export default function useAuth() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const accessToken = getStorage('access_token');
     const userStr = getStorage('user');
-    if (userStr) {
+    let validUser = null;
+
+    if (userStr && accessToken && !isTokenExpired?.(accessToken)) {
       try {
-        setUser(JSON.parse(userStr));
+        validUser = JSON.parse(userStr);
+        setUser(validUser);
         setLoading(false);
-      } catch (error) {
+      } catch {
         setUser(null);
         setLoading(false);
-        router.replace('/sign-in');
       }
     } else {
+      // Remove all tokens if invalid/expired
+      removeStorage('access_token');
+      removeStorage('refresh_token');
+      removeStorage('user');
       setUser(null);
       setLoading(false);
-      router.replace('/sign-in');
+      // Only redirect if not already on /sign-in
+      if (
+        typeof window !== 'undefined' &&
+        window.location.pathname !== '/sign-in'
+      ) {
+        router.replace('/sign-in');
+      }
     }
   }, [router]);
 

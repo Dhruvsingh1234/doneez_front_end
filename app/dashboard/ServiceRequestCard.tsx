@@ -41,16 +41,27 @@ const ServiceRequestCard = ({ request, role, onClick }: ServiceRequestCardProps)
   const isCustomer = role === 'customer';
   const colorClass = getStatusColor(request.status, role);
 
+  // Defensive: get vehicle info safely
   const vehicleInfo = isCustomer
     ? (request as CustomerServiceRequest)
-    : (request as MechanicServiceRequest).service_request;
+    : (request as MechanicServiceRequest)?.service_request;
+
+  const appointmentDate = isCustomer
+    ? (request as CustomerServiceRequest)?.appointment_date
+    : vehicleInfo?.appointment_date;
+
+  // Defensive: fallback for missing vehicle info
+  const vehicleYear = vehicleInfo?.vehicle_year || '';
+  const vehicleMake = vehicleInfo?.vehicle_make || '';
+  const vehicleModel = vehicleInfo?.vehicle_model || '';
+  const serviceLocation = vehicleInfo?.service_location || '';
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ scale: 1.02, boxShadow: '0 8px 32px rgba(16,185,129,0.12)' }}
-      className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 cursor-pointer transition-all duration-300"
+      className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 cursor-pointer transition-all duration-300 relative"
       onClick={onClick}
     >
       <div className="flex flex-col sm:flex-row justify-between gap-6">
@@ -65,39 +76,32 @@ const ServiceRequestCard = ({ request, role, onClick }: ServiceRequestCardProps)
             </div>
             <div className="text-sm text-gray-500 flex items-center gap-1">
               <CalendarIcon className="w-4 h-4" />
-              {new Date(
-                isCustomer
-                  ? (request as CustomerServiceRequest).appointment_date
-                  : (request as MechanicServiceRequest).service_request.appointment_date
-              ).toLocaleDateString('en-US', {
-                weekday: 'short',
-                month: 'short',
-                day: 'numeric',
-              })}
+              {appointmentDate ? (
+                new Date(appointmentDate).toLocaleDateString('en-US', {
+                  weekday: 'short',
+                  month: 'short',
+                  day: 'numeric',
+                })
+              ) : (
+                <span className="text-gray-400 italic">No date</span>
+              )}
             </div>
           </div>
 
           <div className="space-y-2">
             <h3 className="text-xl font-bold text-gray-900 tracking-tight">
-              {`${vehicleInfo.vehicle_year} ${vehicleInfo.vehicle_make} ${vehicleInfo.vehicle_model}`}
+              {(vehicleYear || vehicleMake || vehicleModel)
+                ? `${vehicleYear} ${vehicleMake} ${vehicleModel}`.trim()
+                : 'No vehicle information'}
             </h3>
-            {vehicleInfo.service_location && (
+            {serviceLocation && (
               <div className="flex items-center gap-2 text-gray-600">
                 <MapPinIcon className="w-5 h-5 flex-shrink-0" />
-                <span className="text-sm">{vehicleInfo.service_location}</span>
+                <span className="text-sm">{serviceLocation}</span>
               </div>
             )}
           </div>
-
-          {!isCustomer && (
-            <div className="flex items-center gap-3 bg-blue-50 p-3 rounded-lg">
-              <UserIcon className="w-5 h-5 text-blue-600" />
-              <p className="text-sm text-blue-800 font-medium">
-                Customer: {(request as MechanicServiceRequest).service_request.user.first_name}{' '}
-                {(request as MechanicServiceRequest).service_request.user.last_name}
-              </p>
-            </div>
-          )}
+          
         </div>
 
         <div className="sm:w-48 flex sm:flex-col justify-between items-end gap-4">
@@ -109,6 +113,19 @@ const ServiceRequestCard = ({ request, role, onClick }: ServiceRequestCardProps)
           )}
         </div>
       </div>
+
+      {/* Toast-like creation date at bottom right */}
+      {request.created_at && (
+        <div
+          className="absolute bottom-3 right-3 flex items-center gap-2 bg-white/90 border border-gray-200 shadow-md px-3 py-1 rounded-lg text-xs text-gray-700"
+          style={{ maxWidth: 240 }}
+        >
+          <ClockIcon className="w-4 h-4 text-emerald-500" />
+          <span>
+            Created: <span className="font-medium">{new Date(request.created_at).toLocaleString()}</span>
+          </span>
+        </div>
+      )}
     </motion.div>
   );
 };

@@ -40,6 +40,9 @@ interface ApiResponse<T> {
       },
     });
   
+
+
+
     // Request interceptor
     client.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
@@ -60,18 +63,14 @@ interface ApiResponse<T> {
         const errorData = error.response?.data as any;
         // Log full error details for debugging
         console.error('API Error:', errorData);
-        const apiError: ApiError = {
-          message: errorData?.detail || errorData?.message || 'An unexpected error occurred',
-          status: status || 500,
-          details: errorData
-        };
 
         if (status === 401) {
           toast.error('Session expired. Please login again.');
           window.location.href = '/sign-in';
         }
 
-        return Promise.reject(apiError);
+        // Always reject the error as the API returns it (field: [msg, ...], ...)
+        return Promise.reject(errorData || error);
       }
     );
   
@@ -134,12 +133,8 @@ const handleRequest = async <T>(request: Promise<AxiosResponse<T>>): Promise<Api
         statusText: response.statusText
       };
     } catch (error) {
-      const axiosError = error as AxiosError<ApiError>;
-      throw {
-        message: axiosError.response?.data?.message || axiosError.message,
-        status: axiosError.response?.status || 500,
-        details: axiosError.response?.data
-      };
+      // Always throw the error as received from API (field: [msg, ...], ...)
+      throw error;
     }
   };
   
@@ -223,3 +218,4 @@ export async function postRequestWithStream(
 
     return response;
 }
+    

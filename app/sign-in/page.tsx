@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Input, Button } from '@nextui-org/react';
@@ -33,7 +33,6 @@ const CustomToast = ({
 );
 
 export default function SignIn() {
-    
   const router = useRouter();
   const accessToken = getStorage('access_token');
   const [email, setEmail] = useState('');
@@ -42,11 +41,23 @@ export default function SignIn() {
   const [passwordError, setPasswordError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  
-  if (accessToken) {
-    router.replace('/dashboard');
+
+  // --- FIX: Only redirect in useEffect, not during render ---
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    if (accessToken) {
+      router.replace('/dashboard');
+    } else {
+      setIsReady(true);
+    }
+  }, [accessToken, router]);
+
+  if (!isReady) {
+    // Prevent SSR/CSR mismatch and infinite redirect
     return null;
   }
+
   const validateEmail = (email: string) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email) {
@@ -106,17 +117,41 @@ export default function SignIn() {
         router.replace('/dashboard');
       }, 1200);
     } catch (error: any) {
-      if (error?.response?.status === 401) {
-        toast.custom(
-          <CustomToast
-            message="Invalid credentials. Please check your email and password."
-            type="error"
-          />
-        );
+      // Always expect error.details as { field: [msg, ...], ... }
+      const backendErrors = error.details || error;
+      if (backendErrors) {
+        if (backendErrors.email) {
+          setEmailError(backendErrors.email[0]);
+        }
+        if (backendErrors.password) {
+          setPasswordError(backendErrors.password[0]);
+        }
+        if (backendErrors.non_field_errors) {
+          toast.custom(
+            <CustomToast
+              message={backendErrors.non_field_errors[0]}
+              type="error"
+            />
+          );
+        } else if (backendErrors.detail) {
+          toast.custom(
+            <CustomToast
+              message={backendErrors.detail}
+              type="error"
+            />
+          );
+        } else {
+          toast.custom(
+            <CustomToast
+              message={error.message || 'An error occurred during sign in. Please try again later.'}
+              type="error"
+            />
+          );
+        }
       } else {
         toast.custom(
           <CustomToast
-            message="An error occurred during sign in. Please try again later."
+            message={error.message || 'An error occurred during sign in. Please try again later.'}
             type="error"
           />
         );

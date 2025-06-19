@@ -28,10 +28,14 @@ export default function ServiceNote() {
     const handleChange = (val: string) => setRadioStatus(val);
     
     const handleContinue = () => {
-        const radioVal = radioStatus === 'Other' ? otherDetail : radioStatus;
+         let radioVal = radioStatus;
+        if (radioStatus === 'Other (explain)') {
+            radioVal = otherDetail;
+        }
         setStorage('service-additionalinfo', additionalInfo);
         setStorage('service-radioval', radioVal);
         router.replace('/RFQ/Type');
+
     };
 
     return (

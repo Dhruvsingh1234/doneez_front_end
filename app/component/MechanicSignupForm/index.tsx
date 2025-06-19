@@ -263,42 +263,40 @@ const MechanicSignupForm: React.FC<MechanicSignupFormProps> = ({ password, email
         }
 
         setLoading(true);
-        try {
-            const response = await postRequest(
-                '/users/create-mechanic',
-                updatedFormData
-            );
-            setStorage('access_token', response.data.tokens.access);
-            setStorage('refresh_token', response.data.tokens.refresh);
-            setStorage('user', JSON.stringify(response.data.user));
-            toast.success('Signup Successful!');
-            setIsUnSubmitted(false);
-            setTimeout(() => {
-                window.location.href = '/dashboard';
-            }, 2000);
-                } catch (error: any) {
-            // Try to extract backend validation errors
-            if (error?.response?.data) {
-                const details = error.response.data.details || error.response.data;
-                if (typeof details === 'object') {
-                    Object.entries(details).forEach(([field, messages]) => {
-                        if (Array.isArray(messages)) {
-                            messages.forEach((msg) => toast.error(`${field}: ${msg}`));
-                        } else {
-                            toast.error(`${field}: ${messages}`);
-                        }
+     try {
+        const response = await postRequest(
+            '/users/create-mechanic',
+            updatedFormData
+        );
+        setStorage('access_token', response.data.tokens.access);
+        setStorage('refresh_token', response.data.tokens.refresh);
+        setStorage('user', JSON.stringify(response.data.user));
+        toast.success('Signup Successful!');
+        setIsUnSubmitted(false);
+        setTimeout(() => {
+            window.location.href = '/dashboard';
+        }, 2000);
+    } catch (error: any) {
+
+        const backendErrors = error.details || error;
+        if (backendErrors) {
+            Object.entries(backendErrors).forEach(([field, messages]) => {
+                if (Array.isArray(messages)) {
+                    messages.forEach((msg: string) => {
+                        toast.error(`${field}: ${msg}`);
                     });
-                } else if (typeof details === 'string') {
-                    toast.error(details);
                 } else {
-                    toast.error('Signup Failed. Please try again.');
+                    toast.error(`${field}: ${messages}`);
                 }
-            } else {
-                toast.error(error.message || 'Signup Failed. Please try again.');
-            }
-        } finally {
-            setLoading(false);
+            });
+            return;
         }
+
+        // If we get here, it's not an expected error format
+        toast.error(error.message || 'An unexpected error occurred. Please try again.');
+    } finally {
+        setLoading(false);
+    }
     };
 
     const submitAddress = () => {

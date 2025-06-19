@@ -51,7 +51,6 @@ export default function Estimates() {
                 setError('');
             } catch (err) {
                 setError('Failed to load mechanics. Please try again later.');
-                console.error('Fetch error:', err);
             } finally {
                 setLoading(false);
             }

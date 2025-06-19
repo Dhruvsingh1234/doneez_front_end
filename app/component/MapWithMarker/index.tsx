@@ -95,7 +95,6 @@ const UserLocationMap: React.FC<UserLocationMapProps> = ({
                     throw new Error('Address not found');
                 }
             } catch (error) {
-                console.error('Geocoding error:', error);
                 setVerifiedAddress(
                     'Invalid address - please check and try again'
                 );

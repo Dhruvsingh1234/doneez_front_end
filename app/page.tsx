@@ -10,7 +10,6 @@ import ServiceFooter from './footers/service_footer';
 export default function Home() {
     useEffect(() => {
         const accessToken = getStorage('access_token');
-        console.log(accessToken);
         if(!isTokenExpired(accessToken)){
           redirect('/dashboard');
         }

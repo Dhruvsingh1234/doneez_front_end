@@ -140,19 +140,16 @@ export default function SignUp() {
         setMechanicSignup(true);
       }
     } catch (error: any) {
-      // Improved error handling for backend validation errors
-      if (error.details) {
-        // Django REST Framework returns errors as { field: [msg, ...], ... }
-        const backendErrors = error.details;
-        const newErrors: Record<string, string> = {};
-        // Map backend field names to frontend field names
+      // Always expect error.details as { field: [msg, ...], ... }
+      const backendErrors = error.details || error;
+      const newErrors: Record<string, string> = {};
+      if (backendErrors) {
         if (backendErrors.first_name) newErrors.firstName = backendErrors.first_name[0];
         if (backendErrors.last_name) newErrors.lastName = backendErrors.last_name[0];
         if (backendErrors.email) newErrors.email = backendErrors.email[0];
         if (backendErrors.password) newErrors.password = backendErrors.password[0];
         if (backendErrors.non_field_errors) toast.error(backendErrors.non_field_errors[0]);
         setErrors(newErrors);
-        // If no field errors, show generic
         if (Object.keys(newErrors).length === 0) {
           toast.error(error.message || 'Registration failed. Please try again.');
         }

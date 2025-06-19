@@ -109,29 +109,41 @@ export default function AdminSignIn() {
                 router.replace('/admin');
             }, 2000); // Delay navigation to allow the user to see the success message
         } catch (error: unknown) {
-            if (error instanceof AxiosError) {
-                if (error.response && error.response.status === 401) {
-                    console.log('Invalid credentials');
+            // Always expect error.details as { field: [msg, ...], ... }
+            const backendErrors = (error as any)?.details || error;
+            if (backendErrors) {
+                if (backendErrors.email) {
+                    setEmailError(backendErrors.email[0]);
+                }
+                if (backendErrors.password) {
+                    setPasswordError(backendErrors.password[0]);
+                }
+                if (backendErrors.non_field_errors) {
                     toast.custom((t) => (
                         <CustomToast
-                            message="Invalid credentials. Please check your email and password."
+                            message={backendErrors.non_field_errors[0]}
+                            type="error"
+                        />
+                    ));
+                } else if (backendErrors.detail) {
+                    toast.custom((t) => (
+                        <CustomToast
+                            message={backendErrors.detail}
                             type="error"
                         />
                     ));
                 } else {
-                    console.error('Login error:', error.message);
                     toast.custom((t) => (
                         <CustomToast
-                            message="An error occurred during sign in. Please try again later."
+                            message={(error as any).message || 'An error occurred during sign in. Please try again later.'}
                             type="error"
                         />
                     ));
                 }
             } else {
-                console.error('Unexpected error:', error);
                 toast.custom((t) => (
                     <CustomToast
-                        message="An unexpected error occurred. Please try again later."
+                        message={(error as any).message || 'An error occurred during sign in. Please try again later.'}
                         type="error"
                     />
                 ));

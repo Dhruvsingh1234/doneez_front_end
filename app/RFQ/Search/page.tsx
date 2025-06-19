@@ -74,7 +74,7 @@ export default function ServiceLocation() {
             setStorage('service-location', `${suggestion.main_text} ${suggestion.secondary_text}`);
             setStorage('customZipCode', suggestion.main_text);
             setSuggestions([]);
-            router.replace('/RFQ/Confirm');
+            router.replace('/RFQ/Book');
         }
     };
 

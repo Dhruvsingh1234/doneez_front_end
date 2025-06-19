@@ -331,9 +331,8 @@ export default function ServiceSignUp() {
             }, 2000); // Delay navigation to allow the user to see the success message
         } catch (error: any) {
             // Handle errors returned by the backend
-            if (error.response && error.response.status === 400) {
-                const errors = error.response.data;
-
+            const backendErrors = error.details || error;
+            if (backendErrors) {
                 // Reset all error messages
                 setFirstNameError('');
                 setLastNameError('');
@@ -347,8 +346,8 @@ export default function ServiceSignUp() {
                 setHeardError('');
 
                 // Map backend errors to frontend fields
-                for (const key in errors) {
-                    const messages = errors[key];
+                for (const key in backendErrors) {
+                    const messages = backendErrors[key];
                     const message = Array.isArray(messages)
                         ? messages[0]
                         : messages;

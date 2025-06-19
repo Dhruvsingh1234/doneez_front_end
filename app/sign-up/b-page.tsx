@@ -127,12 +127,18 @@ export default function SignUp() {
             alert('Sign Up successful');
             console.log('Login successful:', user);
         } catch (error: any) {
-            // Handle errors (e.g., invalid credentials)
-            if (error.response && error.response.status === 400) {
-                alert(error.response);
+            // Always expect error.details as { field: [msg, ...], ... }
+            const backendErrors = error.details || error;
+            let errorMsg = '';
+            if (backendErrors) {
+                Object.entries(backendErrors).forEach(([field, messages]) => {
+                    if (Array.isArray(messages)) {
+                        errorMsg += `${field}: ${messages[0]}\n`;
+                    }
+                });
+                alert(errorMsg || 'Registration failed. Please try again.');
             } else {
-                console.error('Login error:', error);
-                alert(error);
+                alert(error.message || 'Registration failed. Please try again.');
             }
         }
     }
